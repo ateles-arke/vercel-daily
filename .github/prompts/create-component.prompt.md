@@ -46,6 +46,7 @@ You're about to generate a new reusable React component.
 ## Example Inputs
 
 **Example 1: Simple UI component**
+
 ```
 Name: Button
 Category: ui
@@ -56,6 +57,7 @@ Features: dark-mode, variants
 ```
 
 **Example 2: Interactive form component**
+
 ```
 Name: CommentForm
 Category: features
@@ -66,6 +68,7 @@ Features: validation, dark-mode
 ```
 
 **Example 3: Data container**
+
 ```
 Name: UserProfile
 Category: features

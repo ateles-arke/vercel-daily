@@ -1,6 +1,6 @@
 ---
 name: create-page
-description: "Scaffold a new App Router page with route structure, metadata, and optional nested layout."
+description: 'Scaffold a new App Router page with route structure, metadata, and optional nested layout.'
 ---
 
 # Create a New Page
@@ -32,33 +32,41 @@ You're about to scaffold a new page in the App Router.
 ## Example Inputs
 
 **Example 1: Simple page**
+
 ```
 Route: blog
 Type: simple
 Layout: no
 Loading: no
 ```
+
 Creates: `app/blog/page.tsx`
 
 **Example 2: Dynamic post page with metadata**
+
 ```
 Route: blog/[slug]
 Type: with metadata
 Layout: no
 Loading: yes
 ```
+
 Creates:
+
 - `app/blog/[slug]/page.tsx` (with `generateMetadata()`)
 - `app/blog/[slug]/loading.tsx`
 
 **Example 3: Dashboard section with shared layout**
+
 ```
 Route: dashboard/analytics
 Type: with API data
 Layout: yes
 Loading: yes
 ```
+
 Creates:
+
 - `app/dashboard/layout.tsx` (shared layout)
 - `app/dashboard/analytics/page.tsx` (with data fetch)
 - `app/dashboard/analytics/loading.tsx`

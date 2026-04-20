@@ -1,7 +1,7 @@
 ---
 name: client-components
 description: "When and how to use 'use client' directive in Next.js 16. Guidelines for Client Component boundaries, interactivity, state management, and patterns."
-applyTo: "**/*.tsx,**/*.ts"
+applyTo: '**/*.tsx,**/*.ts'
 ---
 
 # Client Components
@@ -24,6 +24,7 @@ async function Page() {
 ## When to Add `'use client'`
 
 Add `'use client'` **only when you need**:
+
 - React hooks (`useState`, `useEffect`, `useContext`)
 - Event handlers (`onClick`, `onChange`)
 - Browser APIs (`localStorage`, `window`)
@@ -107,7 +108,7 @@ import FilterControls from '@/components/FilterControls';
 
 export default async function PostsPage() {
   const posts = await fetchPosts();
-  
+
   return (
     <div>
       <FilterControls />
@@ -122,12 +123,12 @@ import { useState } from 'react';
 
 export default function FilterControls() {
   const [filter, setFilter] = useState('');
-  
+
   return (
-    <input 
-      value={filter} 
-      onChange={e => setFilter(e.target.value)} 
-      placeholder="Filter..." 
+    <input
+      value={filter}
+      onChange={e => setFilter(e.target.value)}
+      placeholder="Filter..."
     />
   );
 }
@@ -163,7 +164,7 @@ import { db } from '@/lib/db';
 export async function createPost(formData: FormData) {
   const title = formData.get('title');
   const content = formData.get('content');
-  
+
   const post = await db.posts.create({ title, content });
   redirect(`/posts/${post.id}`);
 }
@@ -182,7 +183,7 @@ export const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState('light');
-  
+
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
       {children}
@@ -210,7 +211,7 @@ import { ThemeContext } from '@/providers/ThemeProvider';
 
 export default function ThemeSwitcher() {
   const { theme, setTheme } = useContext(ThemeContext);
-  
+
   return (
     <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
       Toggle Theme
@@ -223,13 +224,13 @@ export default function ThemeSwitcher() {
 
 ## Common Mistakes
 
-| Mistake | Solution |
-|--------|----------|
-| Making whole page `'use client'` for one interactive element | Extract interactive part to separate Client Component |
-| Using `useState` in Server Component | Move state to Client Component or use Server Actions |
-| Calling async functions in `useEffect` | Fetch server-side and pass as props, or use a library like `useSWR` |
-| Passing Server-only objects to Client Components | Serialize data first: `JSON.stringify(data)` |
-| Forgetting `'use client'` when using hooks | Add directive at top of file |
+| Mistake                                                      | Solution                                                            |
+| ------------------------------------------------------------ | ------------------------------------------------------------------- |
+| Making whole page `'use client'` for one interactive element | Extract interactive part to separate Client Component               |
+| Using `useState` in Server Component                         | Move state to Client Component or use Server Actions                |
+| Calling async functions in `useEffect`                       | Fetch server-side and pass as props, or use a library like `useSWR` |
+| Passing Server-only objects to Client Components             | Serialize data first: `JSON.stringify(data)`                        |
+| Forgetting `'use client'` when using hooks                   | Add directive at top of file                                        |
 
 ---
 
@@ -248,15 +249,15 @@ interface ButtonProps {
   disabled?: boolean;
 }
 
-export default function Button({ 
-  children, 
-  onClick, 
+export default function Button({
+  children,
+  onClick,
   variant = 'primary',
-  disabled = false 
+  disabled = false
 }: ButtonProps) {
   return (
-    <button 
-      onClick={onClick} 
+    <button
+      onClick={onClick}
       className={`btn btn-${variant}`}
       disabled={disabled}
     >

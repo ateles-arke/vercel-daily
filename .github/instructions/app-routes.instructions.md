@@ -1,7 +1,7 @@
 ---
 name: app-routes
-description: "Guidelines for Next.js App Router: route structure, page/layout/route.ts files, dynamic routes, route groups, error handling, and metadata."
-applyTo: "app/**/page.tsx,app/**/layout.tsx,app/**/route.ts,app/**/error.tsx,app/**/loading.tsx,app/**/not-found.tsx"
+description: 'Guidelines for Next.js App Router: route structure, page/layout/route.ts files, dynamic routes, route groups, error handling, and metadata.'
+applyTo: 'app/**/page.tsx,app/**/layout.tsx,app/**/route.ts,app/**/error.tsx,app/**/loading.tsx,app/**/not-found.tsx'
 ---
 
 # App Router Routes
@@ -34,7 +34,7 @@ export async function generateMetadata(
 
 export default async function Page({ params, searchParams }: PageProps) {
   const data = await fetch(`/api/posts/${params.id}`).then(r => r.json());
-  
+
   return (
     <div>
       <h1>{data.title}</h1>
@@ -45,6 +45,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 ```
 
 **Guidelines:**
+
 - Use `async` for data fetching (Server Component by default)
 - Extract `params` and `searchParams` from props
 - Generate metadata via `generateMetadata()` for SEO
@@ -86,6 +87,7 @@ export default function RootLayout({
 ```
 
 **Guidelines:**
+
 - Root layout wraps all pages; nested layouts wrap their segment and children
 - Only root layout has `<html>`, `<head>`, `<body>` tags
 - Nested layouts receive `children` prop
@@ -103,25 +105,26 @@ Route handlers in `app/api/` define API endpoints.
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+	request: NextRequest,
+	{ params }: { params: { id: string } },
 ) {
-  const id = params.id;
-  const data = await fetchPost(id);
-  return NextResponse.json(data);
+	const id = params.id;
+	const data = await fetchPost(id);
+	return NextResponse.json(data);
 }
 
 export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+	request: NextRequest,
+	{ params }: { params: { id: string } },
 ) {
-  const body = await request.json();
-  const updated = await updatePost(params.id, body);
-  return NextResponse.json(updated);
+	const body = await request.json();
+	const updated = await updatePost(params.id, body);
+	return NextResponse.json(updated);
 }
 ```
 
 **Guidelines:**
+
 - Export named functions: `GET`, `POST`, `PUT`, `DELETE`, `PATCH`
 - Use `NextRequest` and `NextResponse` for type safety
 - Extract route params from second argument
@@ -181,6 +184,7 @@ app/
 ```
 
 **Use when:**
+
 - Grouping related routes (auth, admin, docs)
 - Separate layouts per group
 - Organizing code without URL impact
@@ -212,6 +216,7 @@ export default function Error({ error, reset }: ErrorProps) {
 ```
 
 **Guidelines:**
+
 - Must be a Client Component (`'use client'`)
 - Wraps child routes below
 - Receives `error` and `reset()` function
@@ -227,6 +232,7 @@ export default function Loading() {
 ```
 
 **Guidelines:**
+
 - Displays while `page.tsx` is loading
 - Uses React Suspense under the hood
 - Keep minimal (no props)
@@ -249,14 +255,14 @@ export default function NotFound() {
 
 ## Best Practices
 
-| Do | Don't |
-|---|----|
-| ✓ Use async Server Components for data fetching | ✗ Fetch data in Client Components (use hooks instead) |
-| ✓ Extract params/searchParams properly | ✗ Assume dynamic route structure without `params` typing |
-| ✓ Use `generateMetadata()` for dynamic titles | ✗ Hardcode metadata in all pages |
-| ✓ Keep layouts focused on UI structure | ✗ Add heavy business logic to layouts |
-| ✓ Use route groups for organization | ✗ Nest too many segment levels |
-| ✓ Handle errors with `error.tsx` | ✗ Rely on try/catch at page level |
+| Do                                              | Don't                                                    |
+| ----------------------------------------------- | -------------------------------------------------------- |
+| ✓ Use async Server Components for data fetching | ✗ Fetch data in Client Components (use hooks instead)    |
+| ✓ Extract params/searchParams properly          | ✗ Assume dynamic route structure without `params` typing |
+| ✓ Use `generateMetadata()` for dynamic titles   | ✗ Hardcode metadata in all pages                         |
+| ✓ Keep layouts focused on UI structure          | ✗ Add heavy business logic to layouts                    |
+| ✓ Use route groups for organization             | ✗ Nest too many segment levels                           |
+| ✓ Handle errors with `error.tsx`                | ✗ Rely on try/catch at page level                        |
 
 ---
 

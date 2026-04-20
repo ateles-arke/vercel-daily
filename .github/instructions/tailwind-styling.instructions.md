@@ -1,7 +1,7 @@
 ---
 name: tailwind-styling
-description: "Guidelines for styling with Tailwind CSS 4: utility classes, dark mode, CSS variables, custom components, and best practices."
-applyTo: "**/*.tsx,app/globals.css"
+description: 'Guidelines for styling with Tailwind CSS 4: utility classes, dark mode, CSS variables, custom components, and best practices.'
+applyTo: '**/*.tsx,app/globals.css'
 ---
 
 # Tailwind CSS 4 Styling
@@ -9,6 +9,7 @@ applyTo: "**/*.tsx,app/globals.css"
 ## Setup & Configuration
 
 **Current setup:**
+
 - Tailwind CSS 4 via `@tailwindcss/postcss`
 - PostCSS pipeline configured (`postcss.config.mjs`)
 - Global CSS in `app/globals.css`
@@ -22,17 +23,17 @@ Create `tailwind.config.ts` (currently using defaults):
 import type { Config } from 'tailwindcss';
 
 export default {
-  theme: {
-    extend: {
-      colors: {
-        primary: 'var(--color-primary)',
-        secondary: 'var(--color-secondary)',
-      },
-      spacing: {
-        gutter: 'var(--spacing-gutter)',
-      },
-    },
-  },
+	theme: {
+		extend: {
+			colors: {
+				primary: 'var(--color-primary)',
+				secondary: 'var(--color-secondary)',
+			},
+			spacing: {
+				gutter: 'var(--spacing-gutter)',
+			},
+		},
+	},
 } satisfies Config;
 ```
 
@@ -73,23 +74,23 @@ Use CSS custom properties for consistent theming:
 ```css
 /* app/globals.css */
 :root {
-  --background: white;
-  --foreground: black;
-  --border: #e5e7eb;
-  --ring: #3b82f6;
-  --color-primary: #3b82f6;
-  --color-secondary: #10b981;
+	--background: white;
+	--foreground: black;
+	--border: #e5e7eb;
+	--ring: #3b82f6;
+	--color-primary: #3b82f6;
+	--color-secondary: #10b981;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --foreground: #f1f5f9;
-    --border: #334155;
-    --ring: #60a5fa;
-    --color-primary: #60a5fa;
-    --color-secondary: #34d399;
-  }
+	:root {
+		--background: #0f172a;
+		--foreground: #f1f5f9;
+		--border: #334155;
+		--ring: #60a5fa;
+		--color-primary: #60a5fa;
+		--color-secondary: #34d399;
+	}
 }
 ```
 
@@ -179,21 +180,21 @@ Use `@apply` directive in CSS for repeated patterns:
 ```css
 /* app/globals.css */
 @layer components {
-  .btn {
-    @apply px-4 py-2 rounded-lg font-medium transition-colors;
-  }
+	.btn {
+		@apply px-4 py-2 rounded-lg font-medium transition-colors;
+	}
 
-  .btn-primary {
-    @apply bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-600 dark:hover:bg-blue-700;
-  }
+	.btn-primary {
+		@apply bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-600 dark:hover:bg-blue-700;
+	}
 
-  .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-900 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white;
-  }
+	.btn-secondary {
+		@apply bg-gray-200 hover:bg-gray-300 text-gray-900 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white;
+	}
 
-  .card {
-    @apply bg-white dark:bg-slate-900 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700;
-  }
+	.card {
+		@apply bg-white dark:bg-slate-900 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700;
+	}
 }
 ```
 
@@ -276,16 +277,16 @@ import { useState } from 'react';
 
 export default function Modal() {
   const [isOpen, setIsOpen] = useState(false);
-  
+
   return (
     <>
       <button onClick={() => setIsOpen(true)}>Open</button>
-      
+
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white dark:bg-slate-900 rounded-lg p-6">
             <h2>Modal Title</h2>
-            <button 
+            <button
               onClick={() => setIsOpen(false)}
               className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
@@ -302,7 +303,7 @@ export default function Modal() {
 Or use a utility function:
 
 ```typescript
-const classNames = (...classes: (string | boolean | undefined)[]) => 
+const classNames = (...classes: (string | boolean | undefined)[]) =>
   classes.filter(Boolean).join(' ');
 
 export default function Button({ isActive }: { isActive: boolean }) {
@@ -325,13 +326,13 @@ export default function Button({ isActive }: { isActive: boolean }) {
 
 Tailwind CSS 4 has changes from v3:
 
-| Feature | v3 | v4 |
-|---------|----|----|
-| **Import** | `@tailwind base;` | `@import "tailwindcss";` |
-| **Nesting** | `:hover:` → `hover:` | Still use `hover:` |
-| **JS Config** | CommonJS | ESM (`.mjs`) |
-| **Colors** | Limited palette | Extended palette |
-| **Filters** | Separate values | Integrated |
+| Feature       | v3                   | v4                       |
+| ------------- | -------------------- | ------------------------ |
+| **Import**    | `@tailwind base;`    | `@import "tailwindcss";` |
+| **Nesting**   | `:hover:` → `hover:` | Still use `hover:`       |
+| **JS Config** | CommonJS             | ESM (`.mjs`)             |
+| **Colors**    | Limited palette      | Extended palette         |
+| **Filters**   | Separate values      | Integrated               |
 
 Current setup uses v4 syntax, so you're good. Don't copy v3 patterns from old docs.
 
@@ -339,16 +340,16 @@ Current setup uses v4 syntax, so you're good. Don't copy v3 patterns from old do
 
 ## Best Practices
 
-| Do | Don't |
-|---|----|
-| ✓ Use Tailwind utilities for styling | ✗ Write custom CSS for common patterns |
-| ✓ Extract repeated patterns to `@apply` or functions | ✗ Copy-paste long utility strings |
-| ✓ Use CSS variables for theme values | ✗ Hardcode colors |
-| ✓ Keep classes readable with line breaks for long strings | ✗ Put all utilities on one line |
-| ✓ Use arbitrary values for one-off needs: `w-[200px]` | ✗ Add to `tailwind.config.ts` for single use |
-| ✓ Responsive first: mobile → tablet → desktop | ✗ Mobile-only design |
-| ✓ Test dark mode during development | ✗ Forget dark variants |
-| ✓ Use Tailwind's color palette | ✗ Use inconsistent custom colors |
+| Do                                                        | Don't                                        |
+| --------------------------------------------------------- | -------------------------------------------- |
+| ✓ Use Tailwind utilities for styling                      | ✗ Write custom CSS for common patterns       |
+| ✓ Extract repeated patterns to `@apply` or functions      | ✗ Copy-paste long utility strings            |
+| ✓ Use CSS variables for theme values                      | ✗ Hardcode colors                            |
+| ✓ Keep classes readable with line breaks for long strings | ✗ Put all utilities on one line              |
+| ✓ Use arbitrary values for one-off needs: `w-[200px]`     | ✗ Add to `tailwind.config.ts` for single use |
+| ✓ Responsive first: mobile → tablet → desktop             | ✗ Mobile-only design                         |
+| ✓ Test dark mode during development                       | ✗ Forget dark variants                       |
+| ✓ Use Tailwind's color palette                            | ✗ Use inconsistent custom colors             |
 
 ---
 

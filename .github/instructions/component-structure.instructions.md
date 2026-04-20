@@ -1,7 +1,7 @@
 ---
 name: component-structure
-description: "Guidelines for organizing and structuring React components: folder layout, naming conventions, TypeScript patterns, and reusability."
-applyTo: "components/**/*.tsx,app/**/*.tsx"
+description: 'Guidelines for organizing and structuring React components: folder layout, naming conventions, TypeScript patterns, and reusability.'
+applyTo: 'components/**/*.tsx,app/**/*.tsx'
 ---
 
 # Component Structure
@@ -33,6 +33,7 @@ components/
 ```
 
 **Guidelines:**
+
 - `ui/`: Presentational, framework-agnostic components (Button, Card, Input)
 - `layout/`: Page structure components (Header, Sidebar, MainLayout)
 - `features/`: Business-specific components (PostCard uses Post data)
@@ -71,15 +72,16 @@ export default function PostCard({ post }: { post: Post }) {
 ```typescript
 // lib/utils.ts
 export function formatDate(date: Date): string {
-  return date.toLocaleDateString();
+	return date.toLocaleDateString();
 }
 
 export function classNames(...classes: (string | undefined)[]): string {
-  return classes.filter(Boolean).join(' ');
+	return classes.filter(Boolean).join(' ');
 }
 
 // lib/constants.ts
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+export const API_BASE_URL =
+	process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 export const ITEMS_PER_PAGE = 10;
 ```
 
@@ -157,12 +159,12 @@ interface PostListProps {
 
 export default function PostList({ posts, onPostClick }: PostListProps) {
   const [selected, setSelected] = useState<Post | null>(null);
-  
+
   return (
     <div>
       {posts.map(post => (
-        <PostCard 
-          key={post.id} 
+        <PostCard
+          key={post.id}
           post={post}
           onSelect={() => {
             setSelected(post);
@@ -188,11 +190,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export default function Button({ 
-  variant = 'primary', 
+export default function Button({
+  variant = 'primary',
   size = 'md',
   className,
-  ...props 
+  ...props
 }: ButtonProps) {
   const baseClass = 'font-medium rounded transition';
   const variantClass = variant === 'primary' ? 'bg-blue-500' : 'bg-gray-300';
@@ -201,9 +203,9 @@ export default function Button({
     md: 'px-4 py-2 text-base',
     lg: 'px-6 py-3 text-lg',
   }[size];
-  
+
   return (
-    <button 
+    <button
       className={`${baseClass} ${variantClass} ${sizeClass} ${className}`}
       {...props}
     />
@@ -331,15 +333,15 @@ import Button from '../../../components/ui/Button';
 
 ## Best Practices
 
-| Do | Don't |
-|---|----|
+| Do                                                | Don't                                         |
+| ------------------------------------------------- | --------------------------------------------- |
 | ✓ Keep components focused (single responsibility) | ✗ Create "god components" with too much logic |
-| ✓ Extract magic strings to constants | ✗ Hardcode values in JSX |
-| ✓ Type all props explicitly | ✗ Use `any` or `explicit: false` |
-| ✓ Prefer composition over inheritance | ✗ Use class components or mixins |
-| ✓ Memoize expensive computations with `useMemo` | ✗ Recalculate on every render |
-| ✓ Keep Client Component boundaries narrow | ✗ Mark entire pages as `'use client'` |
-| ✓ Document complex props with JSDoc | ✗ Leave props undocumented |
+| ✓ Extract magic strings to constants              | ✗ Hardcode values in JSX                      |
+| ✓ Type all props explicitly                       | ✗ Use `any` or `explicit: false`              |
+| ✓ Prefer composition over inheritance             | ✗ Use class components or mixins              |
+| ✓ Memoize expensive computations with `useMemo`   | ✗ Recalculate on every render                 |
+| ✓ Keep Client Component boundaries narrow         | ✗ Mark entire pages as `'use client'`         |
+| ✓ Document complex props with JSDoc               | ✗ Leave props undocumented                    |
 
 ---
 

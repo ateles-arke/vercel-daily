@@ -1,6 +1,6 @@
 ---
 name: vercel-daily-workspace
-description: "Workspace instructions for Next.js 16 + React 19 greenfield project with TypeScript, Tailwind CSS 4, and pnpm"
+description: 'Workspace instructions for Next.js 16 + React 19 greenfield project with TypeScript, Tailwind CSS 4, and pnpm'
 ---
 
 # Vercel Daily — Workspace Instructions
@@ -8,6 +8,7 @@ description: "Workspace instructions for Next.js 16 + React 19 greenfield projec
 ## Project Overview
 
 **Vercel Daily** is a modern Next.js 16 + React 19 application built with:
+
 - **Framework**: Next.js 16.2.4 (App Router, Server Components by default)
 - **UI**: React 19.2.4 with TypeScript strict mode
 - **Styling**: Tailwind CSS 4 + PostCSS
@@ -63,6 +64,7 @@ pnpm lint          # Run ESLint
 ```
 
 **Dev environment notes:**
+
 - No `.env.local` visible — establish secrets/config strategy if needed
 - Hot reload enabled by default
 - Open browser to `http://localhost:3000` to see changes
@@ -99,6 +101,7 @@ export default function Interactive() {
 ```
 
 **Guidelines:**
+
 - Use Server Components by default for data fetching, secrets, large dependencies
 - Only use `'use client'` when interactivity is truly needed
 - Keep Client Component boundaries narrow (move state up as needed)
@@ -170,17 +173,17 @@ The project uses CSS custom properties for theming (in `app/globals.css`):
 
 ```css
 :root {
-  --background: white;
-  --foreground: black;
-  --font-geist-sans: /* Geist Sans font stack */;
-  --font-geist-mono: /* Geist Mono font stack */;
+	--background: white;
+	--foreground: black;
+	--font-geist-sans: /* Geist Sans font stack */;
+	--font-geist-mono: /* Geist Mono font stack */;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: black;
-    --foreground: white;
-  }
+	:root {
+		--background: black;
+		--foreground: white;
+	}
 }
 ```
 
@@ -217,6 +220,7 @@ pnpm lint
 ```
 
 **Key rules enforced:**
+
 - Next.js API best practices (`next/no-html-link-for-pages`)
 - React best practices (`react/jsx-no-literals`)
 - TypeScript type safety (`@typescript-eslint/no-explicit-any`)
@@ -229,15 +233,15 @@ Format code manually or add Prettier via `npm install --save-dev prettier pretti
 
 ## Common Pitfalls & Guidance
 
-| Issue | Prevention |
-|-------|-----------|
-| **Breaking Changes** | Always check `node_modules/next/dist/docs/` before using Next.js APIs |
+| Issue                      | Prevention                                                                        |
+| -------------------------- | --------------------------------------------------------------------------------- |
+| **Breaking Changes**       | Always check `node_modules/next/dist/docs/` before using Next.js APIs             |
 | **Missing `'use client'`** | Remember Server Components are default; interactivity requires explicit directive |
-| **Environment setup** | Define `.env.local` strategy if config/secrets needed (not yet established) |
-| **No API route structure** | If adding API routes, establish `/app/api` folder early |
-| **Library compatibility** | Some npm packages may not work with React 19; check peer dependencies |
-| **Tailwind v4 syntax** | Modern syntax differs from v3; review `@tailwindcss/postcss` docs |
-| **ESLint flat config** | v9 format incompatible with legacy `.eslintrc.json` plugins |
+| **Environment setup**      | Define `.env.local` strategy if config/secrets needed (not yet established)       |
+| **No API route structure** | If adding API routes, establish `/app/api` folder early                           |
+| **Library compatibility**  | Some npm packages may not work with React 19; check peer dependencies             |
+| **Tailwind v4 syntax**     | Modern syntax differs from v3; review `@tailwindcss/postcss` docs                 |
+| **ESLint flat config**     | v9 format incompatible with legacy `.eslintrc.json` plugins                       |
 
 ---
 
@@ -283,12 +287,12 @@ types/                      # Shared TypeScript types
 
 Additional context-specific guidance is available in `.github/instructions/`:
 
-| Instruction | Applies To | Topics |
-|-------------|-----------|--------|
-| [app-routes.instructions.md](.github/instructions/app-routes.instructions.md) | `app/**/page.tsx`, `layout.tsx`, `route.ts` | Page components, layouts, API routes, dynamic routes, special files |
-| [client-components.instructions.md](.github/instructions/client-components.instructions.md) | `**/*.tsx` (React files) | When to use `'use client'`, boundaries, patterns, Server Actions |
-| [component-structure.instructions.md](.github/instructions/component-structure.instructions.md) | `components/**/*.tsx` | File organization, naming, TypeScript props, reusability patterns |
-| [tailwind-styling.instructions.md](.github/instructions/tailwind-styling.instructions.md) | `**/*.tsx`, `globals.css` | Utility classes, dark mode, CSS variables, Tailwind v4 patterns |
+| Instruction                                                                                     | Applies To                                  | Topics                                                              |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------- |
+| [app-routes.instructions.md](.github/instructions/app-routes.instructions.md)                   | `app/**/page.tsx`, `layout.tsx`, `route.ts` | Page components, layouts, API routes, dynamic routes, special files |
+| [client-components.instructions.md](.github/instructions/client-components.instructions.md)     | `**/*.tsx` (React files)                    | When to use `'use client'`, boundaries, patterns, Server Actions    |
+| [component-structure.instructions.md](.github/instructions/component-structure.instructions.md) | `components/**/*.tsx`                       | File organization, naming, TypeScript props, reusability patterns   |
+| [tailwind-styling.instructions.md](.github/instructions/tailwind-styling.instructions.md)       | `**/*.tsx`, `globals.css`                   | Utility classes, dark mode, CSS variables, Tailwind v4 patterns     |
 
 These instructions are automatically loaded when working on matching files.
 
@@ -298,13 +302,14 @@ These instructions are automatically loaded when working on matching files.
 
 Quick-start templates for scaffolding new code. Use these with `/` slash commands:
 
-| Prompt | Use Case | Input Required |
-|--------|----------|-----------------|
-| [`/create-page`](.github/prompts/create-page.prompt.md) | Generate new App Router pages, layouts, dynamic routes | Route path, page type, options |
-| [`/create-component`](.github/prompts/create-component.prompt.md) | Scaffold reusable React components with proper types | Component name, category, props |
-| [`/api-endpoint`](.github/prompts/api-endpoint.prompt.md) | Create API route handlers with validation & error handling | Path, methods, request/response types |
+| Prompt                                                            | Use Case                                                   | Input Required                        |
+| ----------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------- |
+| [`/create-page`](.github/prompts/create-page.prompt.md)           | Generate new App Router pages, layouts, dynamic routes     | Route path, page type, options        |
+| [`/create-component`](.github/prompts/create-component.prompt.md) | Scaffold reusable React components with proper types       | Component name, category, props       |
+| [`/api-endpoint`](.github/prompts/api-endpoint.prompt.md)         | Create API route handlers with validation & error handling | Path, methods, request/response types |
 
 **Quick start example:**
+
 ```
 Type: /create-page
 Enter: Route: posts, Type: with API data, Layout: no, Loading: yes
@@ -326,6 +331,7 @@ Enter: Route: posts, Type: with API data, Layout: no, Loading: yes
 ## Agent Guidance
 
 ### For Code Generation
+
 1. **Check Next.js docs** for current API signatures before implementing
 2. **Use Server Components by default** — only add `'use client'` when needed
 3. **Leverage TypeScript strict mode** — use proper type annotations
@@ -333,12 +339,14 @@ Enter: Route: posts, Type: with API data, Layout: no, Loading: yes
 5. **Tailwind-first styling** — utility classes, not CSS modules (unless needed)
 
 ### For Refactoring
+
 1. Establish `components/`, `lib/`, `hooks/` early if scaling
 2. Extract shared logic to `lib/` utilities
 3. Enforce Server Component boundaries
 4. Test linting: `pnpm lint` before committing
 
 ### Testing & Validation
+
 - **Build check**: `pnpm build` (verifies TypeScript + Next.js compilation)
 - **Linting**: `pnpm lint` (ESLint rules)
 - **Dev preview**: `pnpm dev` then navigate to `http://localhost:3000`

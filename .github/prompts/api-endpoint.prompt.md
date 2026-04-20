@@ -1,6 +1,6 @@
 ---
 name: api-endpoint
-description: "Create a new API route handler with proper error handling, validation, and TypeScript types."
+description: 'Create a new API route handler with proper error handling, validation, and TypeScript types.'
 ---
 
 # Create an API Endpoint
@@ -53,6 +53,7 @@ You're about to generate a new API route handler.
 ## Example Inputs
 
 **Example 1: Simple GET endpoint**
+
 ```
 Path: posts
 Methods: GET
@@ -63,6 +64,7 @@ Data: Database
 ```
 
 **Example 2: Create resource with validation**
+
 ```
 Path: posts
 Methods: POST
@@ -73,6 +75,7 @@ Data: Database
 ```
 
 **Example 3: Dynamic resource API**
+
 ```
 Path: posts/[id]
 Methods: GET, PUT, DELETE
@@ -83,6 +86,7 @@ Data: Database
 ```
 
 **Example 4: File upload endpoint**
+
 ```
 Path: upload
 Methods: POST
