@@ -33,8 +33,8 @@ export default function SubscribeButton() {
           {/* Backdrop */}
           <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
           {/* Dropdown */}
-          <div className="absolute right-0 z-20 mt-1 w-44 overflow-hidden rounded-md border border-[var(--header-border)] bg-[var(--header-bg)] shadow-md">
-            <div className="border-b border-[var(--header-border)] px-3 py-2 text-xs font-medium text-foreground/50">
+          <div className="absolute right-0 z-20 mt-1 w-44 overflow-hidden rounded-md border border-(--header-border) bg-(--header-bg) shadow-md">
+            <div className="border-b border-(--header-border) px-3 py-2 text-xs font-medium text-foreground/50">
               Notifications
             </div>
             <button
