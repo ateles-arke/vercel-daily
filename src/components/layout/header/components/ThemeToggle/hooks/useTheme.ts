@@ -1,15 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
-function getInitialTheme(): boolean {
-  if (typeof window === 'undefined') return true;
+function getStoredTheme(): boolean {
   const stored = localStorage.getItem('theme');
   return stored ? stored === 'dark' : true;
 }
 
 export function useTheme() {
-  const [isDark, setIsDark] = useState(() => getInitialTheme());
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return getStoredTheme();
+  });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.classList.toggle('dark', isDark);
   }, [isDark]);
 
@@ -21,5 +23,5 @@ export function useTheme() {
     });
   }
 
-  return { isDark, toggle, mounted: true };
+  return { isDark, toggle };
 }
