@@ -1,7 +1,7 @@
 ---
 name: app-routes
 description: 'Guidelines for Next.js App Router: route structure, page/layout/route.ts files, dynamic routes, route groups, error handling, and metadata.'
-applyTo: 'app/**/page.tsx,app/**/layout.tsx,app/**/route.ts,app/**/error.tsx,app/**/loading.tsx,app/**/not-found.tsx'
+applyTo: 'src/app/**/page.tsx,src/app/**/layout.tsx,src/app/**/route.ts,src/app/**/error.tsx,src/app/**/loading.tsx,src/app/**/not-found.tsx'
 ---
 
 # App Router Routes
@@ -13,12 +13,12 @@ applyTo: 'app/**/page.tsx,app/**/layout.tsx,app/**/route.ts,app/**/error.tsx,app
 The default export of `page.tsx` becomes the route segment UI.
 
 ```typescript
-// app/posts/[id]/page.tsx
+// src/app/posts/[id]/page.tsx
 import { Metadata, type ResolvingMetadata } from 'next';
 
 interface PageProps {
-  params: { id: string };
-  searchParams?: Record<string, string | string[]>;
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<Record<string, string | string[]>>;
 }
 
 // Generate metadata dynamically
@@ -26,14 +26,16 @@ export async function generateMetadata(
   { params }: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const { id } = await params;
   return {
-    title: `Post ${params.id}`,
+    title: `Post ${id}`,
     description: 'Post details',
   };
 }
 
 export default async function Page({ params, searchParams }: PageProps) {
-  const data = await fetch(`/api/posts/${params.id}`).then(r => r.json());
+  const { id } = await params;
+  const data = await fetch(`/api/posts/${id}`).then(r => r.json());
 
   return (
     <div>
@@ -58,7 +60,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 Layout wraps child routes and persists state across navigation.
 
 ```typescript
-// app/layout.tsx — Root layout
+// src/app/layout.tsx — Root layout
 import type { Metadata } from 'next';
 import { Geist_Sans, Geist_Mono } from 'next/font/google';
 import './globals.css';
@@ -98,27 +100,28 @@ export default function RootLayout({
 
 ### `route.ts` — API Routes
 
-Route handlers in `app/api/` define API endpoints.
+Route handlers in `src/app/api/` define API endpoints.
 
 ```typescript
-// app/api/posts/[id]/route.ts
+// src/app/api/posts/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
-	const id = params.id;
+	const { id } = await params;
 	const data = await fetchPost(id);
 	return NextResponse.json(data);
 }
 
 export async function PUT(
 	request: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
+	const { id } = await params;
 	const body = await request.json();
-	const updated = await updatePost(params.id, body);
+	const updated = await updatePost(id, body);
 	return NextResponse.json(updated);
 }
 ```
@@ -138,28 +141,31 @@ export async function PUT(
 ### Single Segment: `[param]`
 
 ```typescript
-// app/posts/[id]/page.tsx
-export default function Page({ params }: { params: { id: string } }) {
-  return <div>Post ID: {params.id}</div>;
+// src/app/posts/[id]/page.tsx
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return <div>Post ID: {id}</div>;
 }
 ```
 
 ### Catch-All: `[...path]`
 
 ```typescript
-// app/docs/[...path]/page.tsx
-export default function Page({ params }: { params: { path: string[] } }) {
-  return <div>Path: {params.path.join('/')}</div>;
+// src/app/docs/[...path]/page.tsx
+export default async function Page({ params }: { params: Promise<{ path: string[] }> }) {
+  const { path } = await params;
+  return <div>Path: {path.join('/')}</div>;
 }
 ```
 
 ### Optional Catch-All: `[[...path]]`
 
 ```typescript
-// app/docs/[[...path]]/page.tsx
+// src/app/docs/[[...path]]/page.tsx
 // Matches /docs, /docs/guide, /docs/guide/intro
-export default function Page({ params }: { params?: { path?: string[] } }) {
-  return <div>Path: {params?.path?.join('/') || 'root'}</div>;
+export default async function Page({ params }: { params: Promise<{ path?: string[] }> }) {
+  const { path } = await params;
+  return <div>Path: {path?.join('/') || 'root'}</div>;
 }
 ```
 
@@ -170,7 +176,7 @@ export default function Page({ params }: { params?: { path?: string[] } }) {
 Use parentheses to organize routes without affecting URL structure.
 
 ```
-app/
+src/app/
 ├── (auth)/
 │   ├── login/
 │   │   └── page.tsx       // /login
@@ -196,7 +202,7 @@ app/
 ### `error.tsx` — Error Boundary
 
 ```typescript
-// app/posts/error.tsx
+// src/app/posts/error.tsx
 'use client';
 
 interface ErrorProps {
@@ -225,7 +231,7 @@ export default function Error({ error, reset }: ErrorProps) {
 ### `loading.tsx` — Suspense Fallback
 
 ```typescript
-// app/posts/[id]/loading.tsx
+// src/app/posts/[id]/loading.tsx
 export default function Loading() {
   return <div>Loading post...</div>;
 }
@@ -240,7 +246,7 @@ export default function Loading() {
 ### `not-found.tsx` — 404 Handler
 
 ```typescript
-// app/not-found.tsx
+// src/app/not-found.tsx
 export default function NotFound() {
   return (
     <div>

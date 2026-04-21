@@ -1,7 +1,7 @@
 ---
 name: tailwind-styling
 description: 'Guidelines for styling with Tailwind CSS 4: utility classes, dark mode, CSS variables, custom components, and best practices.'
-applyTo: '**/*.tsx,app/globals.css'
+applyTo: '**/*.tsx,src/app/globals.css'
 ---
 
 # Tailwind CSS 4 Styling
@@ -12,7 +12,7 @@ applyTo: '**/*.tsx,app/globals.css'
 
 - Tailwind CSS 4 via `@tailwindcss/postcss`
 - PostCSS pipeline configured (`postcss.config.mjs`)
-- Global CSS in `app/globals.css`
+- Global CSS in `src/app/globals.css`
 - Dark mode support via `@media (prefers-color-scheme: dark)`
 
 **To customize:**
@@ -72,7 +72,7 @@ export default function Card() {
 Use CSS custom properties for consistent theming:
 
 ```css
-/* app/globals.css */
+/* src/app/globals.css */
 :root {
 	--background: white;
 	--foreground: black;
