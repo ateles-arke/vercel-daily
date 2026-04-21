@@ -6,7 +6,7 @@ import SubscribeButton from './components/SubscribeButton';
 export default function Header() {
   return (
     <header
-      className="sticky top-0 z-50 w-full border-b bg-[var(--header-bg)] border-[var(--header-border)] transition-colors duration-300"
+      className="sticky top-0 z-50 w-full border-b border-(--header-border) bg-(--header-bg) transition-colors duration-300"
     >
       <div className="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4">
         {/* Logo */}
