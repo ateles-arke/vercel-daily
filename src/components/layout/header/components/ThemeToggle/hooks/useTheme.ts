@@ -7,8 +7,8 @@ import { useCallback, useLayoutEffect, useSyncExternalStore } from 'react';
  * @returns {Function} Unsubscribe function to remove event listener
  */
 function subscribeToStorage(callback: () => void) {
-  window.addEventListener('storage', callback);
-  return () => window.removeEventListener('storage', callback);
+	window.addEventListener('storage', callback);
+	return () => window.removeEventListener('storage', callback);
 }
 
 /**
@@ -17,8 +17,8 @@ function subscribeToStorage(callback: () => void) {
  * @returns {boolean} True if dark mode is enabled, false otherwise
  */
 function getSnapshot() {
-  const stored = localStorage.getItem('theme');
-  return stored ? stored === 'dark' : true;
+	const stored = localStorage.getItem('theme');
+	return stored ? stored === 'dark' : true;
 }
 
 /**
@@ -27,7 +27,7 @@ function getSnapshot() {
  * @returns {boolean} Always false for SSR safety
  */
 function getServerSnapshot() {
-  return false;
+	return false;
 }
 
 /**
@@ -38,17 +38,21 @@ function getServerSnapshot() {
  * @returns {{isDark: boolean, toggle: () => void}} Current theme state and toggle function
  */
 export function useTheme() {
-  const isDark = useSyncExternalStore(subscribeToStorage, getSnapshot, getServerSnapshot);
+	const isDark = useSyncExternalStore(
+		subscribeToStorage,
+		getSnapshot,
+		getServerSnapshot,
+	);
 
-  useLayoutEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark);
-  }, [isDark]);
+	useLayoutEffect(() => {
+		document.documentElement.classList.toggle('dark', isDark);
+	}, [isDark]);
 
-  const toggle = useCallback(() => {
-    const next = !isDark;
-    localStorage.setItem('theme', next ? 'dark' : 'light');
-    window.dispatchEvent(new Event('storage'));
-  }, [isDark]);
+	const toggle = useCallback(() => {
+		const next = !isDark;
+		localStorage.setItem('theme', next ? 'dark' : 'light');
+		window.dispatchEvent(new Event('storage'));
+	}, [isDark]);
 
-  return { isDark, toggle };
+	return { isDark, toggle };
 }

@@ -69,7 +69,7 @@ export default function Card() {
 
 ## CSS Variables for Theming
 
-Use CSS custom properties for consistent theming:
+Use CSS custom properties for consistent theming. Dark mode is managed via the `.dark` class on the root element (toggled by `useTheme()` hook):
 
 ```css
 /* src/app/globals.css */
@@ -82,15 +82,13 @@ Use CSS custom properties for consistent theming:
 	--color-secondary: #10b981;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--background: #0f172a;
-		--foreground: #f1f5f9;
-		--border: #334155;
-		--ring: #60a5fa;
-		--color-primary: #60a5fa;
-		--color-secondary: #34d399;
-	}
+.dark {
+	--background: #0f172a;
+	--foreground: #f1f5f9;
+	--border: #334155;
+	--ring: #60a5fa;
+	--color-primary: #60a5fa;
+	--color-secondary: #34d399;
 }
 ```
 

@@ -37,7 +37,11 @@ function getServerSnapshot() {
  * @returns {{isSubscribed: boolean, subscribe: () => void, unsubscribe: () => void}} Subscription state and control functions
  */
 export function useSubscription() {
-	const isSubscribed = useSyncExternalStore(subscribeToStorage, getSnapshot, getServerSnapshot);
+	const isSubscribed = useSyncExternalStore(
+		subscribeToStorage,
+		getSnapshot,
+		getServerSnapshot,
+	);
 
 	const subscribe = useCallback(() => {
 		localStorage.setItem('subscribed', 'true');

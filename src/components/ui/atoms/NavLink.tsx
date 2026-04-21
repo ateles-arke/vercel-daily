@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 interface NavLinkProps {
-  href: string;
-  children: React.ReactNode;
+	href: string;
+	children: React.ReactNode;
 }
 
 /**
@@ -16,19 +16,17 @@ interface NavLinkProps {
  * @returns {React.ReactNode} The styled navigation link element
  */
 export default function NavLink({ href, children }: NavLinkProps) {
-  const pathname = usePathname();
-  const isActive = pathname === href;
+	const pathname = usePathname();
+	const isActive = pathname === href;
 
-  return (
-    <Link
-      href={href}
-      className={`text-sm font-medium transition-colors hover:text-foreground/80 ${
-        isActive
-          ? 'text-foreground'
-          : 'text-foreground/60'
-      }`}
-    >
-      {children}
-    </Link>
-  );
+	return (
+		<Link
+			href={href}
+			className={`text-sm font-medium transition-colors hover:text-foreground/80 ${
+				isActive ? 'text-foreground' : 'text-foreground/60'
+			}`}
+		>
+			{children}
+		</Link>
+	);
 }

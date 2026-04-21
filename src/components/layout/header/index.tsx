@@ -10,41 +10,39 @@ import SubscribeButton from './components/SubscribeButton';
  * @returns {React.ReactNode} The header navigation element
  */
 export default function Header() {
-  return (
-    <header
-      className="sticky top-0 z-50 w-full border-b border-(--header-border) bg-(--header-bg) transition-colors duration-300"
-    >
-      <div className="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-2 font-semibold text-foreground transition-colors"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 116 100"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path d="M57.5 0L115 100H0L57.5 0z" />
-          </svg>
-          <span>Vercel Daily</span>
-        </Link>
+	return (
+		<header className="sticky top-0 z-50 w-full border-b border-(--header-border) bg-(--header-bg) transition-colors duration-300">
+			<div className="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4">
+				{/* Logo */}
+				<Link
+					href="/"
+					className="flex items-center gap-2 font-semibold text-foreground transition-colors"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="18"
+						height="18"
+						viewBox="0 0 116 100"
+						fill="currentColor"
+						aria-hidden="true"
+					>
+						<path d="M57.5 0L115 100H0L57.5 0z" />
+					</svg>
+					<span>Vercel Daily</span>
+				</Link>
 
-        {/* Nav links */}
-        <nav className="flex items-center gap-6">
-          <NavLink href="/">Home</NavLink>
-          <NavLink href="/search">Search</NavLink>
-        </nav>
+				{/* Nav links */}
+				<nav className="flex items-center gap-6">
+					<NavLink href="/">Home</NavLink>
+					<NavLink href="/search">Search</NavLink>
+				</nav>
 
-        {/* Right side */}
-        <div className="ml-auto flex items-center gap-2">
-          <SubscribeButton />
-          <ThemeToggle />
-        </div>
-      </div>
-    </header>
-  );
+				{/* Right side */}
+				<div className="ml-auto flex items-center gap-2">
+					<SubscribeButton />
+					<ThemeToggle />
+				</div>
+			</div>
+		</header>
+	);
 }
