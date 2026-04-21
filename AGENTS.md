@@ -19,6 +19,7 @@ For complete project context, agent conventions, and development guidance, see [
 - **Default Environment**: Server Components, strict TypeScript, dark mode ready
 - **Build Commands**: `pnpm dev` (dev), `pnpm build`, `pnpm lint`
 - **Key Pitfall**: Always check `node_modules/next/dist/docs/` for API specifics
+- **Commit Style**: Use Conventional Commits, e.g. `feat: add responsive navbar`
 
 ### Navigation
 

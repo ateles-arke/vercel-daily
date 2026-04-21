@@ -69,6 +69,26 @@ pnpm lint          # Run ESLint
 - Hot reload enabled by default
 - Open browser to `http://localhost:3000` to see changes
 
+### Commit Message Standard
+
+Use Conventional Commit style for any suggested or generated commit messages:
+
+- Format: `<type>: <short imperative summary>`
+- Keep the type lowercase
+- Keep the summary concise and specific to the primary change
+- Prefer one clear change per commit message
+
+Examples:
+
+```text
+feat: add responsive navbar
+fix: correct route params handling
+refactor: split news card component
+perf: optimize image loading
+docs: update README
+chore: upgrade dependencies
+```
+
 ### Key Build Info
 
 - **Next.js config**: `next.config.ts` (currently minimal, uses all defaults)
