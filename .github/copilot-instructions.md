@@ -194,7 +194,7 @@ const mono = Geist_Mono({ subsets: ['latin'] });
 
 ### Global CSS Variables
 
-The project uses CSS custom properties for theming (in `app/globals.css`):
+The project uses CSS custom properties for theming (in `src/app/globals.css`):
 
 ```css
 :root {
@@ -263,7 +263,7 @@ Format code manually or add Prettier via `npm install --save-dev prettier pretti
 | **Breaking Changes**       | Always check `node_modules/next/dist/docs/` before using Next.js APIs             |
 | **Missing `'use client'`** | Remember Server Components are default; interactivity requires explicit directive |
 | **Environment setup**      | Define `.env.local` strategy if config/secrets needed (not yet established)       |
-| **No API route structure** | If adding API routes, establish `/app/api` folder early                           |
+| **No API route structure** | If adding API routes, establish `src/app/api/` folder early                       |
 | **Library compatibility**  | Some npm packages may not work with React 19; check peer dependencies             |
 | **Tailwind v4 syntax**     | Modern syntax differs from v3; review `@tailwindcss/postcss` docs                 |
 | **ESLint flat config**     | v9 format incompatible with legacy `.eslintrc.json` plugins                       |
@@ -272,38 +272,40 @@ Format code manually or add Prettier via `npm install --save-dev prettier pretti
 
 ## Recommended Folder Structure (Once Growing)
 
-As features are added, establish conventions early:
+As features are added, establish conventions with atomic design early:
 
 ```
-app/
-├── layout.tsx
-├── page.tsx
-├── globals.css
-├── api/                    # API routes (if needed)
-│   ├── health/
-│   └── ...
-├── (auth)/                 # Route groups for logical organization
-│   ├── login/
-│   └── signup/
-└── [slug]/                 # Dynamic routes
-
-components/                 # Reusable React components
-├── ui/                     # Atomic design: buttons, cards, etc.
-│   └── Button.tsx
-├── layout/                 # Layout components
-│   └── Header.tsx
-└── features/               # Feature-specific components
-
-lib/                        # Utilities and helpers
-├── utils.ts
-├── api-client.ts
-└── constants.ts
-
-hooks/                      # Custom React hooks
-└── useAsync.ts
-
-types/                      # Shared TypeScript types
-└── index.ts
+src/
+├── app/
+│   ├── layout.tsx          # Root layout
+│   ├── page.tsx            # Home page
+│   ├── globals.css         # Global styles + theme variables
+│   ├── api/                # API routes (if needed)
+│   │   ├── health/
+│   │   └── ...
+│   ├── features/           # Feature-specific routes
+│   │   ├── posts/
+│   │   └── users/
+│   └── (auth)/             # Route groups for logical organization
+│       ├── login/
+│       └── signup/
+├── components/             # Reusable React components
+│   ├── ui/                 # Design system (atomic design)
+│   │   ├── atoms/          # Primitives: Button, Icon, Badge
+│   │   ├── molecules/      # Combinations: SearchField, CardHeader
+│   │   └── organisms/      # Larger sections: Navbar, HeroSection
+│   ├── layout/             # Page shells: Header, Footer, Sidebar
+│   └── shared/             # Cross-feature components: PostCard, UserProfile
+├── lib/                    # Utilities and helpers
+│   ├── utils.ts
+│   ├── api-client.ts
+│   └── constants.ts
+├── services/               # API integrations and external services
+│   └── api.ts
+├── types/                  # Shared TypeScript types
+│   └── index.ts
+└── hooks/                  # Custom React hooks (optional)
+    └── useAsync.ts
 ```
 
 ---
@@ -312,12 +314,12 @@ types/                      # Shared TypeScript types
 
 Additional context-specific guidance is available in `.github/instructions/`:
 
-| Instruction                                                                                     | Applies To                                  | Topics                                                              |
-| ----------------------------------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------- |
-| [app-routes.instructions.md](.github/instructions/app-routes.instructions.md)                   | `app/**/page.tsx`, `layout.tsx`, `route.ts` | Page components, layouts, API routes, dynamic routes, special files |
-| [client-components.instructions.md](.github/instructions/client-components.instructions.md)     | `**/*.tsx` (React files)                    | When to use `'use client'`, boundaries, patterns, Server Actions    |
-| [component-structure.instructions.md](.github/instructions/component-structure.instructions.md) | `components/**/*.tsx`                       | File organization, naming, TypeScript props, reusability patterns   |
-| [tailwind-styling.instructions.md](.github/instructions/tailwind-styling.instructions.md)       | `**/*.tsx`, `globals.css`                   | Utility classes, dark mode, CSS variables, Tailwind v4 patterns     |
+| Instruction                                                                                     | Applies To                                      | Topics                                                                           |
+| ----------------------------------------------------------------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------- |
+| [app-routes.instructions.md](.github/instructions/app-routes.instructions.md)                   | `src/app/**/page.tsx`, `layout.tsx`, `route.ts` | Page components, layouts, API routes, dynamic routes, special files              |
+| [client-components.instructions.md](.github/instructions/client-components.instructions.md)     | `src/**/*.tsx` (React files)                    | When to use `'use client'`, boundaries, patterns, Server Actions                 |
+| [component-structure.instructions.md](.github/instructions/component-structure.instructions.md) | `src/components/**/*.tsx`                       | File organization, atomic design, naming, TypeScript props, reusability patterns |
+| [tailwind-styling.instructions.md](.github/instructions/tailwind-styling.instructions.md)       | `src/**/*.tsx`, `src/app/globals.css`           | Utility classes, dark mode, CSS variables, Tailwind v4 patterns                  |
 
 These instructions are automatically loaded when working on matching files.
 
