@@ -17,8 +17,8 @@ The default export of `page.tsx` becomes the route segment UI.
 import { Metadata, type ResolvingMetadata } from 'next';
 
 interface PageProps {
-  params: { id: string };
-  searchParams?: Record<string, string | string[]>;
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<Record<string, string | string[]>>;
 }
 
 // Generate metadata dynamically
@@ -26,14 +26,16 @@ export async function generateMetadata(
   { params }: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const { id } = await params;
   return {
-    title: `Post ${params.id}`,
+    title: `Post ${id}`,
     description: 'Post details',
   };
 }
 
 export default async function Page({ params, searchParams }: PageProps) {
-  const data = await fetch(`/api/posts/${params.id}`).then(r => r.json());
+  const { id } = await params;
+  const data = await fetch(`/api/posts/${id}`).then(r => r.json());
 
   return (
     <div>
@@ -106,19 +108,20 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
-	const id = params.id;
+	const { id } = await params;
 	const data = await fetchPost(id);
 	return NextResponse.json(data);
 }
 
 export async function PUT(
 	request: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
+	const { id } = await params;
 	const body = await request.json();
-	const updated = await updatePost(params.id, body);
+	const updated = await updatePost(id, body);
 	return NextResponse.json(updated);
 }
 ```
@@ -139,8 +142,9 @@ export async function PUT(
 
 ```typescript
 // src/app/posts/[id]/page.tsx
-export default function Page({ params }: { params: { id: string } }) {
-  return <div>Post ID: {params.id}</div>;
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return <div>Post ID: {id}</div>;
 }
 ```
 
@@ -148,8 +152,9 @@ export default function Page({ params }: { params: { id: string } }) {
 
 ```typescript
 // src/app/docs/[...path]/page.tsx
-export default function Page({ params }: { params: { path: string[] } }) {
-  return <div>Path: {params.path.join('/')}</div>;
+export default async function Page({ params }: { params: Promise<{ path: string[] }> }) {
+  const { path } = await params;
+  return <div>Path: {path.join('/')}</div>;
 }
 ```
 
@@ -158,8 +163,9 @@ export default function Page({ params }: { params: { path: string[] } }) {
 ```typescript
 // src/app/docs/[[...path]]/page.tsx
 // Matches /docs, /docs/guide, /docs/guide/intro
-export default function Page({ params }: { params?: { path?: string[] } }) {
-  return <div>Path: {params?.path?.join('/') || 'root'}</div>;
+export default async function Page({ params }: { params: Promise<{ path?: string[] }> }) {
+  const { path } = await params;
+  return <div>Path: {path?.join('/') || 'root'}</div>;
 }
 ```
 
