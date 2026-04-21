@@ -10,7 +10,7 @@ applyTo: 'src/components/**/*.tsx,src/app/**/*.tsx'
 
 Create reusable components in `src/components/` following atomic design principles.
 
-```
+```text
 src/
 ├── app/
 │   └── features/                # Feature-specific route areas
