@@ -61,6 +61,86 @@ src/
 
 ---
 
+## Component Folder Pattern
+
+Any component with sub-components or hooks **must** use a folder with an `index.tsx` entry point.
+
+```text
+src/components/<tier>/<ComponentName>/
+├── index.tsx                        ← Default export of the component
+├── components/                      ← Private sub-components (only used by this component)
+│   └── <SubComponent>/
+│       ├── index.tsx
+│       └── hooks/
+│           └── use<SubComponent>.ts ← Hook scoped to that sub-component
+└── hooks/
+    └── use<ComponentName>.ts        ← Hook scoped to this component
+```
+
+### Rules
+
+- A component that owns a hook **must** place it in a `hooks/` folder inside the component folder
+- A component that owns sub-components **must** place them in a `components/` folder inside the component folder
+- Sub-components are **private** — never import them from outside the parent component folder
+- Always import the parent by folder path: `import Header from '@/components/layout/header'`
+- The component `index.tsx` **only** calls the hook and renders UI — no logic inline
+- Side effects (`localStorage`, `document`, `matchMedia`, `fetch`) belong in the hook, never in JSX
+
+### Example — Header with ThemeToggle
+
+```text
+src/components/layout/header/
+├── index.tsx                          ← Header (Server Component)
+└── components/
+    └── ThemeToggle/
+        ├── index.tsx                  ← Renders toggle UI, calls useTheme
+        └── hooks/
+            └── useTheme.ts            ← All theme state + localStorage logic
+```
+
+```typescript
+// ✅ hooks/useTheme.ts — owns all theme state and side effects
+export function useTheme() {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initial = stored ? stored === 'dark' : prefersDark;
+    setIsDark(initial);
+    document.documentElement.classList.toggle('dark', initial);
+  }, []);
+
+  function toggle() {
+    const next = !isDark;
+    setIsDark(next);
+    document.documentElement.classList.toggle('dark', next);
+    localStorage.setItem('theme', next ? 'dark' : 'light');
+  }
+
+  return { isDark, toggle };
+}
+
+// ✅ ThemeToggle/index.tsx — only renders, delegates logic to hook
+'use client';
+import { useTheme } from './hooks/useTheme';
+
+export default function ThemeToggle() {
+  const { isDark, toggle } = useTheme();
+  return <button onClick={toggle}>{isDark ? 'Light' : 'Dark'}</button>;
+}
+```
+
+### When to use a flat file vs. a folder
+
+| Situation                                     | Use                                                                   |
+| --------------------------------------------- | --------------------------------------------------------------------- |
+| Simple component, no hooks, no sub-components | Single `ComponentName.tsx` file                                       |
+| Component has a custom hook                   | `ComponentName/index.tsx` + `ComponentName/hooks/useComponentName.ts` |
+| Component has private sub-components          | `ComponentName/index.tsx` + `ComponentName/components/SubComponent/`  |
+
+---
+
 ## Naming Conventions
 
 ### Components
