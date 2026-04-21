@@ -13,7 +13,7 @@ description: 'Workspace instructions for Next.js 16 + React 19 greenfield projec
 - **UI**: React 19.2.4 with TypeScript strict mode
 - **Styling**: Tailwind CSS 4 + PostCSS
 - **Package Manager**: pnpm (workspace-capable)
-- **Status**: Greenfield template (v0.1.0) — no component/lib structure yet
+- **Status**: Greenfield scaffold (v0.1.0) with a `src/`-based application layout
 
 ### ⚠️ Critical: Next.js 16 Breaking Changes
 
@@ -27,14 +27,20 @@ description: 'Workspace instructions for Next.js 16 + React 19 greenfield projec
 
 ```
 .
-├── app/                          # App Router (RSC by default)
-│   ├── layout.tsx               # Root layout
-│   ├── page.tsx                 # Index page (/route)
-│   └── globals.css              # Global styles
+├── src/
+│   ├── app/                     # App Router (RSC by default)
+│   │   ├── layout.tsx           # Root layout
+│   │   ├── page.tsx             # Index page (/route)
+│   │   └── globals.css          # Global styles
+│   ├── components/
+│   ├── lib/
+│   ├── services/
+│   └── types/
 ├── public/                       # Static assets (Vercel/Next.js SVGs)
+├── .vscode/                      # Workspace settings
 ├── .github/                      # Workspace metadata
 ├── tsconfig.json                # TypeScript strict mode
-├── next.config.ts               # Next.js build config (empty, uses defaults)
+├── next.config.ts               # Next.js build config
 ├── eslint.config.mjs            # ESLint v9 flat config
 ├── postcss.config.mjs           # PostCSS + Tailwind setup
 ├── pnpm-workspace.yaml          # Workspace config
@@ -43,11 +49,10 @@ description: 'Workspace instructions for Next.js 16 + React 19 greenfield projec
 
 ### Established Patterns
 
-- **No component abstractions yet** — Define early as codebase grows:
-  - `components/` for reusable React components
-  - `lib/` for utilities, helpers, types
-  - `hooks/` for custom React hooks
-  - `app/api/` for API routes (if needed)
+- Use `src/` as the root for application code
+- Organize reusable UI in `src/components/ui/` using atomic design (atoms → molecules → organisms)
+- Keep feature routes under `src/app/features/`
+- Place utilities in `src/lib/`, integrations in `src/services/`, and types in `src/types/`
 
 ---
 
@@ -93,7 +98,7 @@ chore: upgrade dependencies
 
 - **Next.js config**: `next.config.ts` (currently minimal, uses all defaults)
 - **TypeScript**: Strict mode enabled (`compilerOptions.strict: true`)
-- **Path alias**: `@/*` maps to project root (already configured in `tsconfig.json`)
+- **Path alias**: `@/*` maps to `src/*` (configured in `tsconfig.json`)
 - **Linting**: ESLint v9 flat config format (`eslint.config.mjs`)
 
 ---
@@ -185,7 +190,7 @@ const mono = Geist_Mono({ subsets: ['latin'] });
 
 - **Config**: `tailwind.config.ts` (not yet created—use defaults)
 - **PostCSS**: `postcss.config.mjs` (already configured)
-- **CSS pipeline**: Global CSS in `app/globals.css`
+- **CSS pipeline**: Global CSS in `src/app/globals.css`
 
 ### Global CSS Variables
 

@@ -1,43 +1,63 @@
 ---
 name: component-structure
-description: 'Guidelines for organizing and structuring React components: folder layout, naming conventions, TypeScript patterns, and reusability.'
-applyTo: 'components/**/*.tsx,app/**/*.tsx'
+description: 'Guidelines for organizing React code in src/, applying atomic design in components/ui, and keeping feature composition clean and reusable.'
+applyTo: 'src/components/**/*.tsx,src/app/**/*.tsx'
 ---
 
-# Component Structure
+# Component Structure & Atomic Design
 
-## File Organization
+## File Organization Under src/
 
-Create a `components/` folder to organize reusable components.
+Create reusable components in `src/components/` following atomic design principles.
 
 ```
-components/
-├── ui/                          # Atomic, reusable UI elements
-│   ├── Button.tsx
-│   ├── Card.tsx
-│   ├── Input.tsx
-│   └── Modal.tsx
-├── layout/                      # Layout components
-│   ├── Header.tsx
-│   ├── Footer.tsx
-│   ├── Sidebar.tsx
-│   └── MainLayout.tsx
-├── features/                    # Feature-specific components (business logic)
-│   ├── PostCard.tsx
-│   ├── PostList.tsx
-│   └── PostFilters.tsx
-└── forms/                       # Form components
-    ├── LoginForm.tsx
-    ├── CreatePostForm.tsx
-    └── ContactForm.tsx
+src/
+├── app/
+│   └── features/                # Feature-specific route areas
+│       ├── news/
+│       ├── auth/
+│       └── profile/
+├── components/
+│   ├── ui/                      # Design system components (atomic)
+│   │   ├── atoms/
+│   │   │   ├── Button.tsx
+│   │   │   ├── Icon.tsx
+│   │   │   ├── Badge.tsx
+│   │   │   └── Label.tsx
+│   │   ├── molecules/
+│   │   │   ├── SearchField.tsx
+│   │   │   ├── CardHeader.tsx
+│   │   │   └── FormRow.tsx
+│   │   └── organisms/
+│   │       ├── Navbar.tsx
+│   │       ├── HeroSection.tsx
+│   │       └── ArticleList.tsx
+│   ├── layout/                  # Layout shells and page wrappers
+│   │   ├── Header.tsx
+│   │   ├── Footer.tsx
+│   │   ├── Sidebar.tsx
+│   │   └── MainLayout.tsx
+│   └── shared/                  # Cross-feature reusable components
+│       ├── PostCard.tsx
+│       ├── UserProfile.tsx
+│       └── Breadcrumb.tsx
+├── lib/                         # Utilities and helpers
+│   ├── utils.ts
+│   └── constants.ts
+├── services/                    # API integrations
+│   └── api.ts
+└── types/                       # Shared TypeScript types
+    └── index.ts
 ```
 
-**Guidelines:**
+**Folder guidelines:**
 
-- `ui/`: Presentational, framework-agnostic components (Button, Card, Input)
-- `layout/`: Page structure components (Header, Sidebar, MainLayout)
-- `features/`: Business-specific components (PostCard uses Post data)
-- `forms/`: Form components with validation/submission logic
+- `ui/atoms/`: Small primitives such as buttons, labels, icons, badges, and inputs
+- `ui/molecules/`: Combinations of atoms such as search fields, card headers, and form rows
+- `ui/organisms/`: Larger reusable sections composed from atoms and molecules such as navbars, hero blocks, and article lists
+- `layout/`: Page shells and template-like structures that wrap routes
+- `shared/`: Reusable cross-feature components that combine UI and light business logic
+- **Never put feature-specific logic in `ui/`** — keep `ui/` purely design-system focused
 
 ---
 
@@ -47,30 +67,32 @@ components/
 
 - **PascalCase for component files**: `Button.tsx`, `UserProfile.tsx`, `PostCard.tsx`
 - **Export default**: Component file exports one component as default
-- **Match folder structure**: If deeply nested, use shorter names
+- **Match folder structure**: Atomic design hierarchy—simplest at the top
 
 ```typescript
-// ✅ components/ui/Button.tsx
+// ✅ src/components/ui/atoms/Button.tsx
 export default function Button({ children, variant }: ButtonProps) {
   return <button className={`btn btn-${variant}`}>{children}</button>;
 }
 
-// ✅ components/features/PostCard.tsx
+// ✅ src/components/ui/molecules/SearchField.tsx
+export default function SearchField({ placeholder, onSearch }: SearchFieldProps) {
+  return <input type="text" placeholder={placeholder} onChange={onSearch} />;
+}
+
+// ✅ src/components/shared/PostCard.tsx
 export default function PostCard({ post }: { post: Post }) {
   return <article>{post.title}</article>;
 }
 
-// ❌ components/PostCardComponent.tsx — avoid redundant naming
-// ❌ components/post-card.tsx — use PascalCase for components
+// ❌ src/components/PostCardComponent.tsx — avoid redundant naming
+// ❌ src/components/post-card.tsx — use PascalCase for components
 ```
 
 ### Utils & Helpers
 
-- **camelCase for utility files**: `utils.ts`, `helpers.ts`, `constants.ts`
-- **Named exports for utilities**
-
 ```typescript
-// lib/utils.ts
+// src/lib/utils.ts
 export function formatDate(date: Date): string {
 	return date.toLocaleDateString();
 }
@@ -79,7 +101,7 @@ export function classNames(...classes: (string | undefined)[]): string {
 	return classes.filter(Boolean).join(' ');
 }
 
-// lib/constants.ts
+// src/lib/constants.ts
 export const API_BASE_URL =
 	process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 export const ITEMS_PER_PAGE = 10;

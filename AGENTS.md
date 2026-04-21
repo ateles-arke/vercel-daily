@@ -15,11 +15,12 @@ For complete project context, agent conventions, and development guidance, see [
 ### Quick Reference
 
 - **Stack**: Next.js 16.2.4 + React 19.2.4 + TypeScript + Tailwind CSS 4 + pnpm
-- **Status**: Greenfield (v0.1.0) — no component/lib structure yet
+- **Status**: Greenfield (v0.1.0) with a `src/`-first folder structure
 - **Default Environment**: Server Components, strict TypeScript, dark mode ready
 - **Build Commands**: `pnpm dev` (dev), `pnpm build`, `pnpm lint`
 - **Key Pitfall**: Always check `node_modules/next/dist/docs/` for API specifics
 - **Commit Style**: Use Conventional Commits, e.g. `feat: add responsive navbar`
+- **Structure Rule**: Keep app code under `src/` and use atomic design in `src/components/ui/`
 
 ### Navigation
 

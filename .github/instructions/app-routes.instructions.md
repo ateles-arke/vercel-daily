@@ -1,7 +1,7 @@
 ---
 name: app-routes
 description: 'Guidelines for Next.js App Router: route structure, page/layout/route.ts files, dynamic routes, route groups, error handling, and metadata.'
-applyTo: 'app/**/page.tsx,app/**/layout.tsx,app/**/route.ts,app/**/error.tsx,app/**/loading.tsx,app/**/not-found.tsx'
+applyTo: 'src/app/**/page.tsx,src/app/**/layout.tsx,src/app/**/route.ts,src/app/**/error.tsx,src/app/**/loading.tsx,src/app/**/not-found.tsx'
 ---
 
 # App Router Routes
@@ -13,7 +13,7 @@ applyTo: 'app/**/page.tsx,app/**/layout.tsx,app/**/route.ts,app/**/error.tsx,app
 The default export of `page.tsx` becomes the route segment UI.
 
 ```typescript
-// app/posts/[id]/page.tsx
+// src/app/posts/[id]/page.tsx
 import { Metadata, type ResolvingMetadata } from 'next';
 
 interface PageProps {
@@ -58,7 +58,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 Layout wraps child routes and persists state across navigation.
 
 ```typescript
-// app/layout.tsx — Root layout
+// src/app/layout.tsx — Root layout
 import type { Metadata } from 'next';
 import { Geist_Sans, Geist_Mono } from 'next/font/google';
 import './globals.css';
@@ -101,7 +101,7 @@ export default function RootLayout({
 Route handlers in `app/api/` define API endpoints.
 
 ```typescript
-// app/api/posts/[id]/route.ts
+// src/app/api/posts/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
@@ -138,7 +138,7 @@ export async function PUT(
 ### Single Segment: `[param]`
 
 ```typescript
-// app/posts/[id]/page.tsx
+// src/app/posts/[id]/page.tsx
 export default function Page({ params }: { params: { id: string } }) {
   return <div>Post ID: {params.id}</div>;
 }
@@ -147,7 +147,7 @@ export default function Page({ params }: { params: { id: string } }) {
 ### Catch-All: `[...path]`
 
 ```typescript
-// app/docs/[...path]/page.tsx
+// src/app/docs/[...path]/page.tsx
 export default function Page({ params }: { params: { path: string[] } }) {
   return <div>Path: {params.path.join('/')}</div>;
 }
@@ -156,7 +156,7 @@ export default function Page({ params }: { params: { path: string[] } }) {
 ### Optional Catch-All: `[[...path]]`
 
 ```typescript
-// app/docs/[[...path]]/page.tsx
+// src/app/docs/[[...path]]/page.tsx
 // Matches /docs, /docs/guide, /docs/guide/intro
 export default function Page({ params }: { params?: { path?: string[] } }) {
   return <div>Path: {params?.path?.join('/') || 'root'}</div>;
@@ -170,7 +170,7 @@ export default function Page({ params }: { params?: { path?: string[] } }) {
 Use parentheses to organize routes without affecting URL structure.
 
 ```
-app/
+src/app/
 ├── (auth)/
 │   ├── login/
 │   │   └── page.tsx       // /login
@@ -196,7 +196,7 @@ app/
 ### `error.tsx` — Error Boundary
 
 ```typescript
-// app/posts/error.tsx
+// src/app/posts/error.tsx
 'use client';
 
 interface ErrorProps {
@@ -225,7 +225,7 @@ export default function Error({ error, reset }: ErrorProps) {
 ### `loading.tsx` — Suspense Fallback
 
 ```typescript
-// app/posts/[id]/loading.tsx
+// src/app/posts/[id]/loading.tsx
 export default function Loading() {
   return <div>Loading post...</div>;
 }
@@ -240,7 +240,7 @@ export default function Loading() {
 ### `not-found.tsx` — 404 Handler
 
 ```typescript
-// app/not-found.tsx
+// src/app/not-found.tsx
 export default function NotFound() {
   return (
     <div>
