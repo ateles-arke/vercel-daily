@@ -1,25 +1,30 @@
-import { useState } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
-function getInitialSubscription(): boolean {
-	if (typeof window === 'undefined') return false;
+function subscribeToStorage(callback: () => void) {
+	window.addEventListener('storage', callback);
+	return () => window.removeEventListener('storage', callback);
+}
+
+function getSnapshot() {
 	return localStorage.getItem('subscribed') === 'true';
 }
 
+function getServerSnapshot() {
+	return false;
+}
+
 export function useSubscription() {
-	const [isSubscribed, setIsSubscribed] = useState(() => {
-		if (typeof window === 'undefined') return false;
-		return getInitialSubscription();
-	});
+	const isSubscribed = useSyncExternalStore(subscribeToStorage, getSnapshot, getServerSnapshot);
 
-	function subscribe() {
-		setIsSubscribed(true);
+	const subscribe = useCallback(() => {
 		localStorage.setItem('subscribed', 'true');
-	}
+		window.dispatchEvent(new Event('storage'));
+	}, []);
 
-	function unsubscribe() {
-		setIsSubscribed(false);
+	const unsubscribe = useCallback(() => {
 		localStorage.setItem('subscribed', 'false');
-	}
+		window.dispatchEvent(new Event('storage'));
+	}, []);
 
 	return { isSubscribed, subscribe, unsubscribe };
 }
