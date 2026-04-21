@@ -3,6 +3,12 @@ import NavLink from '@/components/ui/atoms/NavLink';
 import ThemeToggle from './components/ThemeToggle';
 import SubscribeButton from './components/SubscribeButton';
 
+/**
+ * Header component providing site navigation and theme/subscription controls.
+ * Sticky header displayed at the top of all pages with logo, navigation links,
+ * and user controls for theme toggling and subscription management.
+ * @returns {React.ReactNode} The header navigation element
+ */
 export default function Header() {
   return (
     <header

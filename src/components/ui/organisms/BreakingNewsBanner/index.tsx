@@ -2,6 +2,13 @@ interface BreakingNewsBannerProps {
 	headline: string;
 }
 
+/**
+ * Breaking news banner displaying urgent news headline.
+ * Large prominent banner with warning icon and 'BREAKING' badge.
+ * Shows only when breaking news is available.
+ * @param {BreakingNewsBannerProps} props - Banner content with news headline
+ * @returns {React.ReactNode|null} The breaking news banner or null if no headline
+ */
 export default function BreakingNewsBanner({
 	headline,
 }: BreakingNewsBannerProps) {

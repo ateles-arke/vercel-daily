@@ -3,6 +3,13 @@
 import { useState } from 'react';
 import { useSubscription } from './hooks/useSubscription';
 
+/**
+ * Subscription status button with dropdown menu.
+ * Bell icon indicates subscription state. Unsubscribed users can subscribe via button.
+ * Subscribed users see filled bell and can manage subscription via dropdown menu.
+ * Persists subscription preference to localStorage.
+ * @returns {React.ReactNode} The subscription control button and optional dropdown
+ */
 export default function SubscribeButton() {
   const { isSubscribed, subscribe, unsubscribe } = useSubscription();
   const [showMenu, setShowMenu] = useState(false);
