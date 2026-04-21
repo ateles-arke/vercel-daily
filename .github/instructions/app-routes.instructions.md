@@ -98,7 +98,7 @@ export default function RootLayout({
 
 ### `route.ts` — API Routes
 
-Route handlers in `app/api/` define API endpoints.
+Route handlers in `src/app/api/` define API endpoints.
 
 ```typescript
 // src/app/api/posts/[id]/route.ts
