@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { useSubscription } from './hooks/useSubscription';
 
@@ -7,7 +8,7 @@ import { useSubscription } from './hooks/useSubscription';
  * Subscription status button with dropdown menu.
  * Bell icon indicates subscription state. Unsubscribed users can subscribe via button.
  * Subscribed users see filled bell and can manage subscription via dropdown menu.
- * Persists subscription preference to localStorage.
+ * Persists subscription preference to session cookies.
  * @returns {React.ReactNode} The subscription control button and optional dropdown
  */
 export default function SubscribeButton() {
@@ -28,20 +29,13 @@ export default function SubscribeButton() {
 				}`}
 			>
 				{/* Bell icon */}
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="16"
-					height="16"
-					viewBox="0 0 24 24"
-					fill={isSubscribed ? 'currentColor' : 'none'}
-					stroke="currentColor"
-					strokeWidth="2"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				>
-					<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-					<path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-				</svg>
+				<Image
+					src={isSubscribed ? '/icons/bell-filled.svg' : '/icons/bell.svg'}
+					alt={isSubscribed ? 'Subscribed' : 'Subscribe'}
+					width={16}
+					height={16}
+					className="dark:invert"
+				/>
 
 				{/* Subscribed indicator dot */}
 				{isSubscribed && (
@@ -69,22 +63,13 @@ export default function SubscribeButton() {
 							className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-500 transition-colors hover:bg-foreground/5"
 						>
 							{/* Bell off icon */}
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="14"
-								height="14"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="2"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							>
-								<path d="M8.7 3A6 6 0 0 1 18 8a21.3 21.3 0 0 0 .6 5" />
-								<path d="M17 17H3s3-2 3-9a4.67 4.67 0 0 1 .3-1.7" />
-								<path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-								<path d="m2 2 20 20" />
-							</svg>
+							<Image
+								src="/icons/bell-off.svg"
+								alt="Unsubscribe"
+								width={14}
+								height={14}
+								className="dark:invert"
+							/>
 							Unsubscribe
 						</button>
 					</div>

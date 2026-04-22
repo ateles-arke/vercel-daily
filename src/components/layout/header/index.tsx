@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import NavLink from '@/components/ui/atoms/NavLink';
 import ThemeToggle from './components/ThemeToggle';
@@ -18,16 +19,13 @@ export default function Header() {
 					href="/"
 					className="flex items-center gap-2 font-semibold text-foreground transition-colors"
 				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="18"
-						height="18"
-						viewBox="0 0 116 100"
-						fill="currentColor"
-						aria-hidden="true"
-					>
-						<path d="M57.5 0L115 100H0L57.5 0z" />
-					</svg>
+					<Image
+						src="/icons/logo.svg"
+						alt="Vercel Daily"
+						width={18}
+						height={18}
+						className="dark:invert"
+					/>
 					<span>Vercel Daily</span>
 				</Link>
 

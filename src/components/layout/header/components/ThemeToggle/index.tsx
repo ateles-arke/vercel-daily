@@ -1,11 +1,12 @@
 'use client';
 
+import Image from 'next/image';
 import { useTheme } from './hooks/useTheme';
 
 /**
  * Theme toggle button allowing users to switch between light and dark modes.
  * Displays moon icon in dark mode and sun icon in light mode.
- * Persists theme preference to localStorage and applies CSS class to document root.
+ * Persists theme preference to session cookies and applies CSS class to document root.
  * @returns {React.ReactNode} The theme toggle button element
  */
 export default function ThemeToggle() {
@@ -17,38 +18,13 @@ export default function ThemeToggle() {
 			aria-label="Toggle theme"
 			className="rounded-md p-2 text-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
 		>
-			{isDark ? (
-				/* Moon icon - dark mode */
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="16"
-					height="16"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					strokeWidth="2"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				>
-					<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-				</svg>
-			) : (
-				/* Sun icon - light mode */
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="16"
-					height="16"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					strokeWidth="2"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				>
-					<circle cx="12" cy="12" r="4" />
-					<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-				</svg>
-			)}
+			<Image
+				src={isDark ? '/icons/moon.svg' : '/icons/sun.svg'}
+				alt={isDark ? 'Dark mode' : 'Light mode'}
+				width={16}
+				height={16}
+				className="dark:invert"
+			/>
 		</button>
 	);
 }
