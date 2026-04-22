@@ -6,6 +6,19 @@ applyTo: 'src/app/**/page.tsx,src/app/**/layout.tsx,src/app/**/route.ts,src/app/
 
 # App Router Routes
 
+## Project Route Structure
+
+**This project uses route groups for organization.** The homepage is at `src/app/(pages)/page.tsx`, NOT `src/app/page.tsx`.
+
+Route groups (parentheses) like `(pages)` organize routes logically without affecting the URL:
+
+- `src/app/(pages)/page.tsx` → `/` (homepage)
+- `src/app/(pages)/search/page.tsx` → `/search`
+
+When creating new feature pages, place them in `src/app/(pages)/` or create a new route group for their domain.
+
+---
+
 ## File Conventions
 
 ### `page.tsx` — Page Component
