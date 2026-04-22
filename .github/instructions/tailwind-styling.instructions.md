@@ -13,7 +13,7 @@ applyTo: '**/*.tsx,src/app/globals.css'
 - Tailwind CSS 4 via `@tailwindcss/postcss`
 - PostCSS pipeline configured (`postcss.config.mjs`)
 - Global CSS in `src/app/globals.css`
-- Dark mode support via `@media (prefers-color-scheme: dark)`
+- Dark mode support via project-level CSS variables and the `.dark` class on the root element
 
 **To customize:**
 Create `tailwind.config.ts` (currently using defaults):
@@ -69,7 +69,7 @@ export default function Card() {
 
 ## CSS Variables for Theming
 
-Use CSS custom properties for consistent theming:
+Use CSS custom properties for consistent theming. Dark mode is managed via the `.dark` class on the root element (toggled by `useTheme()` hook):
 
 ```css
 /* src/app/globals.css */
@@ -82,15 +82,13 @@ Use CSS custom properties for consistent theming:
 	--color-secondary: #10b981;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--background: #0f172a;
-		--foreground: #f1f5f9;
-		--border: #334155;
-		--ring: #60a5fa;
-		--color-primary: #60a5fa;
-		--color-secondary: #34d399;
-	}
+.dark {
+	--background: #0f172a;
+	--foreground: #f1f5f9;
+	--border: #334155;
+	--ring: #60a5fa;
+	--color-primary: #60a5fa;
+	--color-secondary: #34d399;
 }
 ```
 
@@ -111,11 +109,21 @@ Or use Tailwind's `var()` syntax in utilities:
 ```typescript
 export default function Hero() {
   return (
-    <div className="bg-[var(--background)] text-[var(--foreground)]">
+    <div className="bg-(--background) text-(--foreground)">
       Themed content
     </div>
   );
 }
+```
+
+Prefer Tailwind v4's CSS variable shorthand over bracketed `var(...)` syntax:
+
+```typescript
+// ✅ Preferred in this project
+<div className="bg-(--header-bg) border-(--header-border) text-(--foreground)" />
+
+// Avoid when the shorthand is available
+<div className="bg-[var(--header-bg)] border-[var(--header-border)] text-[var(--foreground)]" />
 ```
 
 ---
