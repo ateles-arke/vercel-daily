@@ -40,7 +40,7 @@ export default function BreakingNewsBanner({
 				</span>
 
 				{/* Headline */}
-				<p className="truncate opacity-90">{headline}</p>
+				<p className="min-w-0 flex-1 truncate opacity-90">{headline}</p>
 			</div>
 		</div>
 	);
