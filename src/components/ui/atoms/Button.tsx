@@ -44,9 +44,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	/**
 	 * Optional right icon (SVG image from public/icons/)
 	 * Pass an <Image> component with src pointing to public/icons/
+	 * Icon color tip:
+	 * - primary button (light bg in dark mode, dark bg in light mode): use className="invert dark:invert-0"
+	 * - secondary button (transparent bg, foreground text): use className="dark:invert"
 	 * @example
 	 * import Image from 'next/image';
-	 * <Button rightIcon={<Image src="/icons/arrow-right.svg" alt="" width={16} height={16} className="dark:invert" />}>
+	 * // On primary button:
+	 * <Button variant="primary" rightIcon={<Image src="/icons/arrow-right.svg" alt="" width={16} height={16} className="invert dark:invert" />}>
 	 *   Browse articles
 	 * </Button>
 	 */
