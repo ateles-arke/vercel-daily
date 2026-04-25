@@ -1,20 +1,23 @@
 import { Suspense } from 'react';
+import { cacheLife, cacheTag } from 'next/cache';
 import BreakingNewsBanner from '@/components/ui/organisms/BreakingNewsBanner';
 import { getBreakingNews } from '@/services/newsApi';
-//TODO: implement error handling and loading states for breaking news - CHECKING WITH VERCEL
 
 /**
  * Async component fetching and displaying the latest breaking news.
- * Fetches from news API with ISR caching. Falls back to demo headline during development.
+ * Cached via 'use cache' with a short 'minutes' profile and a 'breaking-news' tag
+ * for on-demand invalidation when urgent news must appear immediately.
  * @async
  * @returns {Promise<React.ReactNode>} Breaking news banner or null if unavailable
  */
 async function BreakingNewsSection() {
-	//TODO: fetch real breaking news from API - CHECKING WITH VERCEL
-	// const news = await getBreakingNews();
-	// if (!news) return null;
-	// return <BreakingNewsBanner headline={news.headline} />;
-	const headline = 'Vercel Introduces the AI Cloud Platform';
+	'use cache';
+	cacheLife('minutes');
+	cacheTag('breaking-news');
+
+	const news = await getBreakingNews();
+	// Use fallback headline until API authentication is resolved
+	const headline = news?.headline || 'Vercel Introduces the AI Cloud Platform';
 	return <BreakingNewsBanner headline={headline} />;
 }
 

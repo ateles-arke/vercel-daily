@@ -1,9 +1,11 @@
 import type { BreakingNewsItem, BreakingNewsResponse } from '@/types/api';
 
 const BASE_URL = process.env.NEWS_API_BASE_URL!;
+const BYPASS_TOKEN = process.env.NEWS_API_BYPASS_TOKEN!;
 
 const headers = {
-	'x-vercel-protection-bypass': process.env.NEWS_API_BYPASS_TOKEN!,
+	accept: 'application/json',
+	'x-vercel-protection-bypass': BYPASS_TOKEN,
 };
 
 /**
@@ -14,13 +16,40 @@ const headers = {
  * @returns {Promise<BreakingNewsItem|null>} The breaking news item or null if unavailable
  */
 export async function getBreakingNews(): Promise<BreakingNewsItem | null> {
-	const res = await fetch(`${BASE_URL}/breaking-news`, {
-		headers,
-		next: { revalidate: 60 },
-	});
+	try {
+		// Try header approach first
+		console.log('[Breaking News API] Attempting with header...');
+		let res = await fetch(`${BASE_URL}/breaking-news`, {
+			headers,
+		});
 
-	if (!res.ok) return null;
+		// Fallback to query parameter if header fails
+		if (!res.ok && res.status === 401) {
+			console.log(
+				'[Breaking News API] Header failed, trying query parameter...',
+			);
+			res = await fetch(
+				`${BASE_URL}/breaking-news?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(BYPASS_TOKEN)}`,
+			);
+		}
 
-	const json: BreakingNewsResponse = await res.json();
-	return json.success ? json.data : null;
+		if (!res.ok) {
+			console.error(
+				`[Breaking News API] Status ${res.status}: ${res.statusText}`,
+			);
+			return null;
+		}
+
+		const json: BreakingNewsResponse = await res.json();
+		if (json.success && json.data) {
+			console.log(`[Breaking News API] ✓ Loaded: "${json.data.headline}"`);
+		}
+		return json.success ? json.data : null;
+	} catch (error) {
+		console.error(
+			'[Breaking News API] Error:',
+			error instanceof Error ? error.message : String(error),
+		);
+		return null;
+	}
 }
