@@ -2,6 +2,8 @@ import { Suspense } from 'react';
 import { cacheLife, cacheTag } from 'next/cache';
 import BreakingNewsBanner from '@/components/ui/organisms/BreakingNewsBanner';
 import { getBreakingNews } from '@/services/newsApi';
+import Button from '@/components/ui/atoms/Button';
+import Image from 'next/image';
 
 /**
  * Async component fetching and displaying the latest breaking news.
@@ -32,6 +34,23 @@ export default function Home() {
 			<Suspense fallback={'...Loading breaking news'}>
 				<BreakingNewsSection />
 				HOME PAGE
+				<Button variant="primary" size="md">
+					Subscribe
+				</Button>
+				<Button
+					variant="secondary"
+					rightIcon={
+						<Image
+							src="/icons/arrow-right.svg"
+							alt=""
+							width={16}
+							height={16}
+							className="dark:invert"
+						/>
+					}
+				>
+					Browse articles
+				</Button>
 			</Suspense>
 		</main>
 	);
