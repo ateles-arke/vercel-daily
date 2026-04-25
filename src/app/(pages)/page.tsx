@@ -1,8 +1,21 @@
 import { Suspense } from 'react';
+import type { Metadata } from 'next';
 import { cacheLife, cacheTag } from 'next/cache';
 import BreakingNewsBanner from '@/components/ui/organisms/BreakingNewsBanner';
 import HeroSection from '@/components/ui/organisms/HeroSection';
 import { getBreakingNews } from '@/services/newsApi';
+
+export const metadata: Metadata = {
+	title: 'Home',
+	description:
+		'News and insights for modern web developers. Changelogs, engineering deep dives, customer stories, and community updates — all in one place.',
+	openGraph: {
+		title: 'The Vercel Daily — News for Modern Web Developers',
+		description:
+			'News and insights for modern web developers. Changelogs, engineering deep dives, customer stories, and community updates — all in one place.',
+		url: '/',
+	},
+};
 
 /**
  * Async component fetching and displaying the latest breaking news.
