@@ -1,8 +1,12 @@
+import { cacheLife, cacheTag } from 'next/cache';
 import type {
 	BreakingNewsItem,
 	BreakingNewsResponse,
 	Article,
+	ArticleDetail,
+	ArticleDetailResponse,
 	ArticlesResponse,
+	TrendingArticlesResponse,
 } from '@/types/api';
 
 const BASE_URL = process.env.NEWS_API_BASE_URL!;
@@ -61,5 +65,72 @@ export async function getFeaturedArticles(): Promise<Article[]> {
 	}
 
 	const json: ArticlesResponse = await res.json();
+	return json.success ? json.data : [];
+}
+
+/**
+ * Fetches a single article by slug.
+ * Cached for article-detail rendering and metadata generation.
+ * Returns null for 404 responses so callers can delegate to notFound().
+ * @param {string} slug - Article slug route param
+ * @returns {Promise<ArticleDetail|null>} Full article detail or null if not found
+ */
+export async function getArticleBySlug(
+	slug: string,
+): Promise<ArticleDetail | null> {
+	'use cache';
+	cacheLife('hours');
+	cacheTag('articles');
+	cacheTag(`article:${slug}`);
+
+	let res = await fetch(`${BASE_URL}/articles/${slug}`, {
+		headers,
+	});
+
+	if (!res.ok && res.status === 401) {
+		res = await fetch(
+			`${BASE_URL}/articles/${slug}?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(BYPASS_TOKEN)}`,
+		);
+	}
+
+	if (res.status === 404) {
+		return null;
+	}
+
+	if (!res.ok) {
+		throw new Error(`[Article API] Status ${res.status}: ${res.statusText}`);
+	}
+
+	const json: ArticleDetailResponse = await res.json();
+	return json.success ? json.data : null;
+}
+
+/**
+ * Fetches trending articles for article discovery and static generation.
+ * @returns {Promise<ArticleDetail[]>} Trending article collection
+ */
+export async function getTrendingArticles(): Promise<ArticleDetail[]> {
+	'use cache';
+	cacheLife('hours');
+	cacheTag('articles');
+	cacheTag('trending-articles');
+
+	let res = await fetch(`${BASE_URL}/articles/trending`, {
+		headers,
+	});
+
+	if (!res.ok && res.status === 401) {
+		res = await fetch(
+			`${BASE_URL}/articles/trending?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(BYPASS_TOKEN)}`,
+		);
+	}
+
+	if (!res.ok) {
+		throw new Error(
+			`[Trending Articles API] Status ${res.status}: ${res.statusText}`,
+		);
+	}
+
+	const json: TrendingArticlesResponse = await res.json();
 	return json.success ? json.data : [];
 }

@@ -10,7 +10,7 @@ interface ArticleCardProps {
 /**
  * Card component displaying a single article with image, category, date, headline, and summary.
  * Links headline to the article detail page via slug.
- * Feature-specific component (article routing logic) — kept in shared/ not ui/.
+ * Feature-specific component kept under components/features/article.
  * @param {ArticleCardProps} props - The article data to display
  * @returns {React.ReactNode} The article card element
  */
@@ -24,10 +24,9 @@ export default function ArticleCard({ article }: ArticleCardProps) {
 
 	return (
 		<article className="flex flex-col">
-			{/* Article Image */}
 			<Link
 				href={`/articles/${slug}`}
-				className="block mb-4 overflow-hidden rounded-lg aspect-video relative bg-foreground/5"
+				className="relative mb-4 block aspect-video overflow-hidden rounded-lg bg-foreground/5"
 			>
 				<Image
 					src={image}
@@ -38,8 +37,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
 				/>
 			</Link>
 
-			{/* Meta: category · date */}
-			<div className="mb-2 flex items-center gap-2 text-xs font-medium text-foreground/50 uppercase tracking-wide">
+			<div className="mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-foreground/50">
 				<span>{category}</span>
 				<span>·</span>
 				<time dateTime={hasValidDate ? publishedAt : undefined}>
@@ -47,18 +45,16 @@ export default function ArticleCard({ article }: ArticleCardProps) {
 				</time>
 			</div>
 
-			{/* Title */}
 			<h3 className="mb-2 text-base font-semibold leading-snug">
 				<Link
 					href={`/articles/${slug}`}
-					className="hover:underline underline-offset-2"
+					className="underline-offset-2 hover:underline"
 				>
 					{title}
 				</Link>
 			</h3>
 
-			{/* Excerpt */}
-			<p className="text-sm text-foreground/60 leading-relaxed line-clamp-3">
+			<p className="line-clamp-3 text-sm leading-relaxed text-foreground/60">
 				{excerpt}
 			</p>
 		</article>
