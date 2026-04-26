@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import Image from 'next/image';
 import Button from '@/components/ui/atoms/Button';
 import { cn } from '@/lib/cn';
 import { useBackButton } from './hooks/useBackButton';
@@ -8,20 +8,6 @@ import { useBackButton } from './hooks/useBackButton';
 interface BackButtonProps {
 	label?: string;
 	className?: string;
-}
-
-function ArrowLeftIcon(): ReactNode {
-	return (
-		<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-4 w-4">
-			<path
-				d="M15 18l-6-6 6-6M9 12h12"
-				stroke="currentColor"
-				strokeWidth="1.75"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-		</svg>
-	);
 }
 
 export default function BackButton({
@@ -38,7 +24,14 @@ export default function BackButton({
 			onClick={goBack}
 			className={cn('gap-2 rounded-full px-4 py-2 text-sm', className)}
 		>
-			<ArrowLeftIcon />
+			<Image
+				src="/icons/arrow-left.svg"
+				alt=""
+				width={16}
+				height={16}
+				aria-hidden="true"
+				className="dark:invert"
+			/>
 			<span>{label}</span>
 		</Button>
 	);
