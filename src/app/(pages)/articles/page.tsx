@@ -1,6 +1,8 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import ArticleCard from '@/components/features/article/ArticleCard';
 import Pagination from '@/components/ui/atoms/Pagination';
+import ArticlesGridSkeleton from '@/components/features/article/ArticlesGridSkeleton';
 import { getAllArticles } from '@/services/newsApi';
 
 const PAGE_SIZE = 12;
@@ -22,16 +24,17 @@ export const metadata: Metadata = {
 };
 
 /**
- * All articles page with server-side pagination.
- * Reads the ?page search param to determine which page to fetch.
- * Falls back to page 1 for invalid or missing values.
+ * Inner async component that fetches and renders the articles grid.
+ * Separated so the page shell renders immediately and streams this in via Suspense.
  * @async
- * @param {AllArticlesPageProps} props - Page props including async searchParams
+ * @param {{ searchParams: Promise<Record<string, string | string[]>> }} props
  * @returns {Promise<React.ReactNode>} The articles grid with pagination controls
  */
-export default async function AllArticlesPage({
+async function ArticlesGrid({
 	searchParams,
-}: AllArticlesPageProps) {
+}: {
+	searchParams: Promise<Record<string, string | string[]>>;
+}) {
 	const params = await searchParams;
 	const rawPage = params.page;
 	const currentPage = Math.max(
@@ -42,16 +45,13 @@ export default async function AllArticlesPage({
 	const { articles, meta } = await getAllArticles(currentPage, PAGE_SIZE);
 
 	return (
-		<main className="px-8 py-12 md:px-16 md:py-16 lg:px-24">
-			{/* Header */}
-			<div className="mb-8">
-				<h1 className="mb-1 text-3xl font-black tracking-tight">Articles</h1>
-				<p className="text-sm text-foreground/50">
-					{meta.total > 0
-						? `${meta.total} article${meta.total !== 1 ? 's' : ''}`
-						: 'All articles'}
-				</p>
-			</div>
+		<>
+			{/* Article count */}
+			<p className="mb-8 text-sm text-foreground/50">
+				{meta.total > 0
+					? `${meta.total} article${meta.total !== 1 ? 's' : ''}`
+					: 'All articles'}
+			</p>
 
 			{/* Articles grid */}
 			{articles.length === 0 ? (
@@ -78,6 +78,26 @@ export default async function AllArticlesPage({
 					/>
 				</div>
 			)}
+		</>
+	);
+}
+
+/**
+ * All articles page. Renders the static header shell immediately, then streams
+ * in the articles grid via Suspense — compatible with cacheComponents: true.
+ * @param {AllArticlesPageProps} props - Page props including async searchParams
+ * @returns {React.ReactNode} Page shell with streamed articles grid
+ */
+export default function AllArticlesPage({ searchParams }: AllArticlesPageProps) {
+	return (
+		<main className="px-8 py-12 md:px-16 md:py-16 lg:px-24">
+			{/* Static header — renders immediately */}
+			<h1 className="mb-8 text-3xl font-black tracking-tight">Articles</h1>
+
+			{/* Dynamic content — streams in with skeleton fallback */}
+			<Suspense fallback={<ArticlesGridSkeleton />}>
+				<ArticlesGrid searchParams={searchParams} />
+			</Suspense>
 		</main>
 	);
 }
