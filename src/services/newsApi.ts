@@ -1,4 +1,5 @@
 import { cacheLife, cacheTag } from 'next/cache';
+import { API_BYPASS_TOKEN, buildBypassUrl } from '@/lib/api-constants';
 import type {
 	BreakingNewsItem,
 	BreakingNewsResponse,
@@ -10,11 +11,10 @@ import type {
 } from '@/types/api';
 
 const BASE_URL = process.env.NEWS_API_BASE_URL!;
-const BYPASS_TOKEN = process.env.NEWS_API_BYPASS_TOKEN!;
 
 const headers = {
 	accept: 'application/json',
-	'x-vercel-protection-bypass': BYPASS_TOKEN,
+	'x-vercel-protection-bypass': API_BYPASS_TOKEN,
 };
 
 /**
@@ -32,7 +32,10 @@ export async function getBreakingNews(): Promise<BreakingNewsItem | null> {
 	// Fallback to query parameter if header-based bypass fails
 	if (!res.ok && res.status === 401) {
 		res = await fetch(
-			`${BASE_URL}/breaking-news?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(BYPASS_TOKEN)}`,
+			buildBypassUrl(`${BASE_URL}/breaking-news`, API_BYPASS_TOKEN),
+			{
+				headers,
+			},
 		);
 	}
 
@@ -83,13 +86,16 @@ export async function getArticleBySlug(
 	cacheTag('articles');
 	cacheTag(`article:${slug}`);
 
-	let res = await fetch(`${BASE_URL}/articles/${slug}`, {
+	const encodedSlug = encodeURIComponent(slug);
+
+	let res = await fetch(`${BASE_URL}/articles/${encodedSlug}`, {
 		headers,
 	});
 
 	if (!res.ok && res.status === 401) {
 		res = await fetch(
-			`${BASE_URL}/articles/${slug}?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(BYPASS_TOKEN)}`,
+			buildBypassUrl(`${BASE_URL}/articles/${encodedSlug}`, API_BYPASS_TOKEN),
+			{ headers },
 		);
 	}
 
@@ -121,7 +127,8 @@ export async function getTrendingArticles(): Promise<ArticleDetail[]> {
 
 	if (!res.ok && res.status === 401) {
 		res = await fetch(
-			`${BASE_URL}/articles/trending?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(BYPASS_TOKEN)}`,
+			buildBypassUrl(`${BASE_URL}/articles/trending`, API_BYPASS_TOKEN),
+			{ headers },
 		);
 	}
 
