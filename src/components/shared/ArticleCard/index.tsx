@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { format, parseISO } from 'date-fns';
+import { format, isValid, parseISO } from 'date-fns';
 import type { Article } from '@/types/api';
 
 interface ArticleCardProps {
@@ -16,12 +16,19 @@ interface ArticleCardProps {
  */
 export default function ArticleCard({ article }: ArticleCardProps) {
 	const { slug, title, excerpt, category, publishedAt, image } = article;
-	const formattedDate = format(parseISO(publishedAt), 'MMM d, yyyy');
+	const parsedDate = parseISO(publishedAt);
+	const hasValidDate = isValid(parsedDate);
+	const formattedDate = hasValidDate
+		? format(parsedDate, 'MMM d, yyyy')
+		: 'Unknown date';
 
 	return (
 		<article className="flex flex-col">
 			{/* Article Image */}
-			<Link href={`/articles/${slug}`} className="block mb-4 overflow-hidden rounded-lg aspect-video relative bg-foreground/5">
+			<Link
+				href={`/articles/${slug}`}
+				className="block mb-4 overflow-hidden rounded-lg aspect-video relative bg-foreground/5"
+			>
 				<Image
 					src={image}
 					alt={title}
@@ -35,7 +42,9 @@ export default function ArticleCard({ article }: ArticleCardProps) {
 			<div className="mb-2 flex items-center gap-2 text-xs font-medium text-foreground/50 uppercase tracking-wide">
 				<span>{category}</span>
 				<span>·</span>
-				<time dateTime={publishedAt}>{formattedDate}</time>
+				<time dateTime={hasValidDate ? publishedAt : undefined}>
+					{formattedDate}
+				</time>
 			</div>
 
 			{/* Title */}
