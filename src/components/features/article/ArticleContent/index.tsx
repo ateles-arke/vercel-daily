@@ -5,6 +5,18 @@ interface ArticleContentProps {
 	content: ArticleContentBlock[];
 }
 
+const ALLOWED_HREF_PROTOCOLS = ['https:', 'http:'];
+
+function isSafeHref(href: string): boolean {
+	try {
+		const url = new URL(href);
+		return ALLOWED_HREF_PROTOCOLS.includes(url.protocol);
+	} catch {
+		// Relative URLs (no protocol) are safe
+		return href.startsWith('/') || href.startsWith('#');
+	}
+}
+
 function renderInlineText(text: string) {
 	const parts = text.split(/(\[[^\]]+\]\([^\)]+\)|`[^`]+`)/g);
 
@@ -12,6 +24,11 @@ function renderInlineText(text: string) {
 		const linkMatch = part.match(/^\[([^\]]+)\]\(([^\)]+)\)$/);
 		if (linkMatch) {
 			const [, label, href] = linkMatch;
+
+			if (!isSafeHref(href)) {
+				return <span key={`unsafe-${index}`}>{label}</span>;
+			}
+
 			return (
 				<a
 					key={`${href}-${index}`}
