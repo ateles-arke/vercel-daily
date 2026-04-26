@@ -3,14 +3,18 @@
 import Image from 'next/image';
 import { useTheme } from './hooks/useTheme';
 
+interface ThemeToggleProps {
+	initialIsDark: boolean;
+}
+
 /**
  * Theme toggle button allowing users to switch between light and dark modes.
  * Displays moon icon in dark mode and sun icon in light mode.
  * Persists theme preference to session cookies and applies CSS class to document root.
  * @returns {React.ReactNode} The theme toggle button element
  */
-export default function ThemeToggle() {
-	const { isDark, toggle } = useTheme();
+export default function ThemeToggle({ initialIsDark }: ThemeToggleProps) {
+	const { isDark, toggle } = useTheme(initialIsDark);
 
 	return (
 		<button

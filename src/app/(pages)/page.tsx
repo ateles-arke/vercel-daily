@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { cacheLife, cacheTag } from 'next/cache';
 import BreakingNewsBanner from '@/components/ui/organisms/BreakingNewsBanner';
 import HeroSection from '@/components/ui/organisms/HeroSection';
+import FeaturedArticles from '@/components/ui/organisms/FeaturedArticles';
 import { getBreakingNews } from '@/services/newsApi';
 
 export const metadata: Metadata = {
@@ -47,6 +48,9 @@ export default function Home() {
 				<BreakingNewsSection />
 			</Suspense>
 			<HeroSection />
+			<Suspense fallback={'...Loading featured articles'}>
+				<FeaturedArticles />
+			</Suspense>
 		</main>
 	);
 }

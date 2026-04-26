@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
@@ -44,19 +45,23 @@ export const metadata: Metadata = {
  * @param {Readonly<{children: React.ReactNode}>} props - Child pages to render
  * @returns {React.ReactNode} The HTML document structure with header, children, and footer
  */
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const themeCookie = (await cookies()).get('theme')?.value;
+	const isDark = themeCookie ? themeCookie === 'dark' : true;
+	const htmlClassName = `${geistSans.variable} ${geistMono.variable} h-full antialiased${isDark ? ' dark' : ''}`;
+
 	return (
 		<html
 			lang="en"
 			suppressHydrationWarning
-			className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+			className={htmlClassName}
 		>
 			<body className="min-h-full flex flex-col">
-				<Header />
+				<Header initialIsDark={isDark} />
 				{children}
 			</body>
 		</html>
