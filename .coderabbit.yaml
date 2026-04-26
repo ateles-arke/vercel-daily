@@ -28,8 +28,6 @@ reviews:
         Stylelint configuration unless Stylelint is actually present in the repository.
 
 tone_instructions: >-
-  When reviewing this repository, assume Next.js 16 semantics instead of older App Router advice.
-  Respect cacheComponents and the 'use cache' directive as required project conventions, and avoid
-  suggestions that replace them with incompatible client-side or legacy caching approaches. Also
-  respect Tailwind CSS v4 directives and avoid proposing Stylelint configuration for tooling that
-  is not installed or configured in this repository.
+  Next.js 16: treat 'use cache', cacheLife(), cacheTag() and cacheComponents as required
+  conventions. Do not replace them with legacy patterns. Tailwind CSS v4 directives are
+  valid; do not suggest Stylelint config for tooling not present in this repo.
