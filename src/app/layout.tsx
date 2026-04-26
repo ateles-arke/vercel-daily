@@ -16,6 +16,8 @@ const geistMono = Geist_Mono({
 	subsets: ['latin'],
 });
 
+const BASE_CLASS_NAME = `${geistSans.variable} ${geistMono.variable} h-full antialiased`;
+
 export const metadata: Metadata = {
 	title: {
 		default: 'The Vercel Daily',
@@ -41,8 +43,7 @@ export const metadata: Metadata = {
 
 async function ThemeInitializer() {
 	const themeCookie = (await cookies()).get('theme')?.value ?? null;
-	const baseClassName = `${geistSans.variable} ${geistMono.variable} h-full antialiased`;
-	const { isDark } = getInitialThemeConfig(baseClassName, themeCookie);
+	const { isDark } = getInitialThemeConfig(BASE_CLASS_NAME, themeCookie);
 	return <Header initialIsDark={isDark} />;
 }
 
@@ -51,10 +52,8 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const baseClassName = `${geistSans.variable} ${geistMono.variable} h-full antialiased`;
-
 	return (
-		<html lang="en" suppressHydrationWarning className={baseClassName}>
+		<html lang="en" suppressHydrationWarning className={BASE_CLASS_NAME}>
 			<head>
 				{/* Inline script runs before first paint to apply .dark without flash */}
 				<script
