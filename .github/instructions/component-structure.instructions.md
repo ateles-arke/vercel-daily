@@ -61,6 +61,86 @@ src/
 
 ---
 
+## Component Folder Pattern
+
+Any component with sub-components or hooks **must** use a folder with an `index.tsx` entry point.
+
+```text
+src/components/<tier>/<ComponentName>/
+├── index.tsx                        ← Default export of the component
+├── components/                      ← Private sub-components (only used by this component)
+│   └── <SubComponent>/
+│       ├── index.tsx
+│       └── hooks/
+│           └── use<SubComponent>.ts ← Hook scoped to that sub-component
+└── hooks/
+    └── use<ComponentName>.ts        ← Hook scoped to this component
+```
+
+### Rules
+
+- A component that owns a hook **must** place it in a `hooks/` folder inside the component folder
+- A component that owns sub-components **must** place them in a `components/` folder inside the component folder
+- Sub-components are **private** — never import them from outside the parent component folder
+- Always import the parent by folder path: `import Header from '@/components/layout/header'`
+- The component `index.tsx` **only** calls the hook and renders UI — no logic inline
+- Side effects (`localStorage`, `document`, `matchMedia`, `fetch`) belong in the hook, never in JSX
+
+### Example — Header with ThemeToggle
+
+```text
+src/components/layout/header/
+├── index.tsx                          ← Header (Server Component)
+└── components/
+    └── ThemeToggle/
+        ├── index.tsx                  ← Renders toggle UI, calls useTheme
+        └── hooks/
+            └── useTheme.ts            ← All theme state + localStorage logic
+```
+
+```typescript
+// ✅ hooks/useTheme.ts — owns all theme state and side effects
+export function useTheme() {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initial = stored ? stored === 'dark' : prefersDark;
+    setIsDark(initial);
+    document.documentElement.classList.toggle('dark', initial);
+  }, []);
+
+  function toggle() {
+    const next = !isDark;
+    setIsDark(next);
+    document.documentElement.classList.toggle('dark', next);
+    localStorage.setItem('theme', next ? 'dark' : 'light');
+  }
+
+  return { isDark, toggle };
+}
+
+// ✅ ThemeToggle/index.tsx — only renders, delegates logic to hook
+'use client';
+import { useTheme } from './hooks/useTheme';
+
+export default function ThemeToggle() {
+  const { isDark, toggle } = useTheme();
+  return <button onClick={toggle}>{isDark ? 'Light' : 'Dark'}</button>;
+}
+```
+
+### When to use a flat file vs. a folder
+
+| Situation                                     | Use                                                                   |
+| --------------------------------------------- | --------------------------------------------------------------------- |
+| Simple component, no hooks, no sub-components | Single `ComponentName.tsx` file                                       |
+| Component has a custom hook                   | `ComponentName/index.tsx` + `ComponentName/hooks/useComponentName.ts` |
+| Component has private sub-components          | `ComponentName/index.tsx` + `ComponentName/components/SubComponent/`  |
+
+---
+
 ## Naming Conventions
 
 ### Components
@@ -333,6 +413,168 @@ export default Card;
   <Card.Body>Content</Card.Body>
   <Card.Footer>Actions</Card.Footer>
 </Card>
+```
+
+---
+
+## Asset Management: SVG & Image Components
+
+### SVG Strategy
+
+**All SVG assets must be:**
+
+1. Stored as files in `/public/icons/` directory
+2. Rendered using Next.js `<Image>` component from `next/image`
+3. **Never** used as inline `<svg>` JSX in components
+
+**Why this pattern:**
+
+- Separates concerns: visualizations live in files, not component code
+- Enables Next.js image optimization automatically
+- Reduces component code size and complexity
+- Maintains a single source of truth for icon updates
+- Improves performance with lazy loading and format optimization
+
+### Organizing SVG Files
+
+```text
+/public/icons/
+├── logo.svg                    ← Brand logo (18×18)
+├── sun.svg                     ← Light mode icon (16×16)
+├── moon.svg                    ← Dark mode icon (16×16)
+├── bell.svg                    ← Notification bell outline (16×16)
+├── bell-filled.svg             ← Notification bell filled (16×16)
+├── bell-off.svg                ← Notification bell off (14×14)
+└── warning.svg                 ← Alert/breaking news (15×15)
+```
+
+**Naming conventions:**
+
+- Use lowercase with hyphens: `my-icon.svg` (not `MyIcon.svg` or `my_icon.svg`)
+- Use descriptive names: `bell-filled.svg` (not `icon1.svg`)
+- Include variants: `bell.svg`, `bell-filled.svg`, `bell-off.svg`
+- Document dimensions in viewBox (for reference)
+
+### Using Images in Components
+
+```typescript
+// ✅ Simple icon usage
+import Image from 'next/image';
+
+export default function Header() {
+  return (
+    <header className="flex items-center gap-4">
+      <Image
+        src="/icons/logo.svg"
+        alt="Vercel Daily logo"
+        width={18}
+        height={18}
+      />
+      <h1>Vercel Daily</h1>
+    </header>
+  );
+}
+
+// ✅ State-dependent icon (e.g., theme toggle)
+'use client';
+import Image from 'next/image';
+import { useTheme } from './hooks/useTheme';
+
+export default function ThemeToggle() {
+  const { isDark, toggle } = useTheme();
+
+  return (
+    <button onClick={toggle} aria-label="Toggle theme">
+      <Image
+        src={isDark ? '/icons/moon.svg' : '/icons/sun.svg'}
+        alt={isDark ? 'Moon icon' : 'Sun icon'}
+        width={16}
+        height={16}
+      />
+    </button>
+  );
+}
+
+// ✅ Icon with variants (e.g., subscription bell)
+'use client';
+import Image from 'next/image';
+import { useSubscription } from './hooks/useSubscription';
+
+export default function SubscribeButton() {
+  const { isSubscribed, toggleSubscription } = useSubscription();
+
+  return (
+    <button onClick={toggleSubscription} aria-label="Manage subscription">
+      <Image
+        src={
+          isSubscribed
+            ? '/icons/bell-filled.svg'
+            : '/icons/bell.svg'
+        }
+        alt={isSubscribed ? 'Subscribed' : 'Unsubscribed'}
+        width={16}
+        height={16}
+      />
+    </button>
+  );
+}
+```
+
+### Image Props & Sizing
+
+Always specify `width` and `height` for static SVGs:
+
+```typescript
+// ✅ Always include dimensions
+<Image
+  src="/icons/logo.svg"
+  alt="Logo"
+  width={18}
+  height={18}
+/>
+
+// ✅ Use original SVG dimensions (preserved in viewBox as reference)
+// Logo SVG: viewBox="0 0 18 18" → width={18} height={18}
+// Bell SVG: viewBox="0 0 16 16" → width={16} height={16}
+
+// ❌ Avoid omitting dimensions
+<Image src="/icons/logo.svg" alt="Logo" />
+
+// ❌ Avoid inline SVGs
+<svg viewBox="0 0 18 18">
+  <path d="..." />
+</svg>
+```
+
+### When to Create a New Icon
+
+If no icon exists in `/public/icons/`:
+
+1. Create the SVG file with a descriptive name
+2. Define the viewBox with exact dimensions (e.g., `viewBox="0 0 16 16"`)
+3. Keep the SVG minimal (strip unnecessary metadata, use simple shapes)
+4. Export it as `/public/icons/my-icon.svg`
+5. Update this section with the new icon reference
+
+**Bad SVG example:**
+
+```xml
+<!-- ❌ Too much metadata, mixed content -->
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ... many attributes>
+  <defs>...</defs>
+  <style>...</style>
+  <g id="layer1">...</g>
+</svg>
+```
+
+**Good SVG example:**
+
+```xml
+<!-- ✅ Clean, minimal, proper viewBox -->
+<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <path d="M8 1c.5 0 1 .5 1 1v3h3c.5 0 1 .5 1 1s-.5 1-1 1h-3v3c0 .5-.5 1-1 1s-1-.5-1-1v-3H4c-.5 0-1-.5-1-1s.5-1 1-1h3V2c0-.5.5-1 1-1z" />
+</svg>
 ```
 
 ---
