@@ -5,17 +5,9 @@ const nextConfig: NextConfig = {
 	images: {
 		remotePatterns: [
 			{
+				// Article images are currently served from this Vercel Blob bucket.
 				protocol: 'https',
-				hostname: '**.vercel.app',
-			},
-			{
-				protocol: 'https',
-				hostname: '**.vercel.com',
-			},
-			{
-				// Vercel Blob Storage — used for article images
-				protocol: 'https',
-				hostname: '**.public.blob.vercel-storage.com',
+				hostname: 'i8qy5y6gxkdgdcv9.public.blob.vercel-storage.com',
 			},
 		],
 	},
