@@ -2,3 +2,27 @@ reviews:
   auto_review:
     base_branches:
       - 'develop'
+  path_instructions:
+    - path: 'src/**/*.{ts,tsx}'
+      instructions: >-
+        This repository uses Next.js 16.2.4 App Router with React Server Components by default
+        and cacheComponents enabled. Treat the 'use cache' directive, cacheLife(), and cacheTag()
+        as intentional Next.js 16 cached-components patterns. Do not suggest removing caching,
+        converting cached server components to client components, or adding route segment config
+        that conflicts with cacheComponents.
+    - path: 'src/app/**/*.{ts,tsx}'
+      instructions: >-
+        For Next.js 16 App Router code, prefer server components by default and respect framework
+        file conventions such as loading.tsx, error.tsx, not-found.tsx, and route-group layouts.
+        When cookies(), headers(), or other dynamic APIs are used alongside cacheComponents,
+        avoid suggestions based on older Next.js patterns that break Partial Prerendering.
+    - path: 'src/components/**/*.{ts,tsx}'
+      instructions: >-
+        Components under src/components may intentionally mix server-rendered UI with Next.js 16
+        caching boundaries. Review with awareness of Suspense streaming, server-first rendering,
+        and cached data flows before suggesting refactors.
+
+tone_instructions: >-
+  When reviewing this repository, assume Next.js 16 semantics instead of older App Router advice.
+  Respect cacheComponents and the 'use cache' directive as required project conventions, and avoid
+  suggestions that replace them with incompatible client-side or legacy caching approaches.
