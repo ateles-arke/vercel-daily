@@ -2,7 +2,6 @@ import { cacheLife, cacheTag } from 'next/cache';
 import Link from 'next/link';
 import ArticleCard from '@/components/shared/ArticleCard';
 import { getFeaturedArticles } from '@/services/newsApi';
-import Error from '@/components/ui/organisms/FeaturedArticles/components/Error';
 import NoArticlesFound from '@/components/ui/organisms/FeaturedArticles/components/NoArticlesFound';
 
 /**
@@ -18,16 +17,8 @@ export default async function FeaturedArticles() {
 	cacheLife('hours');
 	cacheTag('featured-articles');
 
-	const articlesResult = await getFeaturedArticles().then(
-		(data) => ({ data, hasError: false as const }),
-		() => ({ data: [], hasError: true as const }),
-	);
-
-	if (articlesResult.hasError) {
-		return <Error />;
-	}
-
-	const articles = articlesResult.data;
+	// Throws on API failure — error.tsx boundary handles it
+	const articles = await getFeaturedArticles();
 
 	if (articles.length === 0) {
 		return <NoArticlesFound />;
@@ -54,7 +45,7 @@ export default async function FeaturedArticles() {
 			{/* Articles grid */}
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 				{articles.slice(0, 6).map((article) => (
-					<ArticleCard key={article.id} article={article} />
+				<ArticleCard key={article.id} article={article} />
 				))}
 			</div>
 		</section>

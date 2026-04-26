@@ -28,7 +28,7 @@ export async function getBreakingNews(): Promise<BreakingNewsItem | null> {
 		// Fallback to query parameter if header fails
 		if (!res.ok && res.status === 401) {
 			res = await fetch(
-				`${BASE_URL}/breaking-news?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(BYPASS_TOKEN)}`,
+				`${BASE_URL}/breasing-news?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(BYPASS_TOKEN)}`,
 			);
 		}
 
@@ -55,30 +55,22 @@ export async function getBreakingNews(): Promise<BreakingNewsItem | null> {
 
 /**
  * Fetches featured articles from the news API.
- * Gracefully returns an empty array if the API is unavailable or request fails.
+ * Throws on non-OK responses so callers can handle errors via error boundaries.
  * @async
- * @returns {Promise<Article[]>} Array of featured articles or empty array if unavailable
+ * @returns {Promise<Article[]>} Array of featured articles
+ * @throws {Error} When the API returns a non-OK status or the request fails
  */
 export async function getFeaturedArticles(): Promise<Article[]> {
-	try {
-		const res = await fetch(`${BASE_URL}/articles?featured=true`, {
-			headers,
-		});
+	const res = await fetch(`${BASE_URL}/articles?featured=true`, {
+		headers,
+	});
 
-		if (!res.ok) {
-			console.error(
-				`[Featured Articles API] Status ${res.status}: ${res.statusText}`,
-			);
-			return [];
-		}
-
-		const json: ArticlesResponse = await res.json();
-		return json.success ? json.data : [];
-	} catch (error) {
-		console.error(
-			'[Featured Articles API] Error:',
-			error instanceof Error ? error.message : String(error),
+	if (!res.ok) {
+		throw new Error(
+			`[Featured Articles API] Status ${res.status}: ${res.statusText}`,
 		);
-		return [];
 	}
+
+	const json: ArticlesResponse = await res.json();
+	return json.success ? json.data : [];
 }
