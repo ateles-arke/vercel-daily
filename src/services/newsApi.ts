@@ -1,36 +1,51 @@
+import { cacheLife, cacheTag } from 'next/cache';
+import { API_BYPASS_TOKEN, buildBypassUrl } from '@/lib/api-constants';
 import type {
 	BreakingNewsItem,
 	BreakingNewsResponse,
 	Article,
+	ArticleDetail,
+	ArticleDetailResponse,
 	ArticlesResponse,
+	TrendingArticlesResponse,
 } from '@/types/api';
 
 const BASE_URL = process.env.NEWS_API_BASE_URL!;
-const BYPASS_TOKEN = process.env.NEWS_API_BYPASS_TOKEN!;
 
 const headers = {
 	accept: 'application/json',
-	'x-vercel-protection-bypass': BYPASS_TOKEN,
+	'x-vercel-protection-bypass': API_BYPASS_TOKEN,
 };
 
 /**
+ * Performs a fetch with the shared API headers and retries once with bypass query params on 401.
+ * Keeps Vercel protection fallback behavior consistent across endpoints that support it.
+ * @async
+ * @param {string} url - Endpoint URL to request
+ * @returns {Promise<Response>} The initial response or the retry response when a bypass retry was needed
+ */
+async function fetchWithBypassRetry(url: string): Promise<Response> {
+	let response = await fetch(url, { headers });
+
+	if (!response.ok && response.status === 401) {
+		response = await fetch(buildBypassUrl(url, API_BYPASS_TOKEN), {
+			headers,
+		});
+	}
+
+	return response;
+}
+
+/**
  * Fetches the latest breaking news item from the news API.
+ * Used for rendering the breaking news banner at the top of pages.
  * Throws on non-OK responses so callers can handle errors via error boundaries.
  * @async
  * @returns {Promise<BreakingNewsItem|null>} The breaking news item or null if unavailable
- * @throws {Error} When the API returns a non-OK status or the request fails
+ * @throws {Error} When the API returns a non-OK status after retries or the request fails
  */
 export async function getBreakingNews(): Promise<BreakingNewsItem | null> {
-	let res = await fetch(`${BASE_URL}/breaking-news`, {
-		headers,
-	});
-
-	// Fallback to query parameter if header-based bypass fails
-	if (!res.ok && res.status === 401) {
-		res = await fetch(
-			`${BASE_URL}/breaking-news?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(BYPASS_TOKEN)}`,
-		);
-	}
+	const res = await fetchWithBypassRetry(`${BASE_URL}/breaking-news`);
 
 	if (!res.ok) {
 		throw new Error(
@@ -44,10 +59,11 @@ export async function getBreakingNews(): Promise<BreakingNewsItem | null> {
 
 /**
  * Fetches featured articles from the news API.
+ * Used for displaying the featured articles section on the homepage.
  * Throws on non-OK responses so callers can handle errors via error boundaries.
  * @async
- * @returns {Promise<Article[]>} Array of featured articles
- * @throws {Error} When the API returns a non-OK status or the request fails
+ * @returns {Promise<Article[]>} Array of featured articles, empty array if unavailable
+ * @throws {Error} When the API returns a non-OK status after retries or the request fails
  */
 export async function getFeaturedArticles(): Promise<Article[]> {
 	const res = await fetch(`${BASE_URL}/articles?featured=true`, {
@@ -61,5 +77,63 @@ export async function getFeaturedArticles(): Promise<Article[]> {
 	}
 
 	const json: ArticlesResponse = await res.json();
+	return json.success ? json.data : [];
+}
+
+/**
+ * Fetches a single article by slug.
+ * Cached for article-detail rendering and metadata generation.
+ * Uses Next.js 16 cacheComponents with cacheLife('hours') for server-side revalidation.
+ * Returns null for 404 responses so callers can delegate to notFound().
+ * @async
+ * @param {string} slug - Article slug route param (URL-encoded automatically for safety)
+ * @returns {Promise<ArticleDetail|null>} Full article detail or null if not found
+ * @throws {Error} When the API returns a non-OK status (except 404) after retries
+ */
+export async function getArticleBySlug(
+	slug: string,
+): Promise<ArticleDetail | null> {
+	'use cache';
+	cacheLife('hours');
+	cacheTag('articles');
+	cacheTag(`article:${slug}`);
+
+	const encodedSlug = encodeURIComponent(slug);
+	const res = await fetchWithBypassRetry(`${BASE_URL}/articles/${encodedSlug}`);
+
+	if (res.status === 404) {
+		return null;
+	}
+
+	if (!res.ok) {
+		throw new Error(`[Article API] Status ${res.status}: ${res.statusText}`);
+	}
+
+	const json: ArticleDetailResponse = await res.json();
+	return json.success ? json.data : null;
+}
+
+/**
+ * Fetches trending articles for article discovery and static generation.
+ * Cached for static generation of article detail pages via generateStaticParams.
+ * Uses Next.js 16 cacheComponents with cacheLife('hours') for server-side revalidation.
+ * @async
+ * @returns {Promise<ArticleDetail[]>} Trending article collection, empty array if unavailable
+ * @throws {Error} When the API returns a non-OK status after retries or the request fails
+ */
+export async function getTrendingArticles(): Promise<ArticleDetail[]> {
+	'use cache';
+	cacheLife('hours');
+	cacheTag('articles');
+	cacheTag('trending-articles');
+	const res = await fetchWithBypassRetry(`${BASE_URL}/articles/trending`);
+
+	if (!res.ok) {
+		throw new Error(
+			`[Trending Articles API] Status ${res.status}: ${res.statusText}`,
+		);
+	}
+
+	const json: TrendingArticlesResponse = await res.json();
 	return json.success ? json.data : [];
 }

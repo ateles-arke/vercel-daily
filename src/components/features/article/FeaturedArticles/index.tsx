@@ -1,8 +1,8 @@
 import { cacheLife, cacheTag } from 'next/cache';
 import Link from 'next/link';
-import ArticleCard from '@/components/shared/ArticleCard';
+import ArticleCard from '@/components/features/article/ArticleCard';
+import NoArticlesFound from '@/components/features/article/FeaturedArticles/components/NoArticlesFound';
 import { getFeaturedArticles } from '@/services/newsApi';
-import NoArticlesFound from '@/components/ui/organisms/FeaturedArticles/components/NoArticlesFound';
 
 /**
  * Featured articles section displaying a grid of at least 6 handpicked articles.
@@ -17,7 +17,6 @@ export default async function FeaturedArticles() {
 	cacheLife('hours');
 	cacheTag('featured-articles');
 
-	// Throws on API failure — error.tsx boundary handles it
 	const articles = await getFeaturedArticles();
 
 	if (articles.length === 0) {
@@ -25,27 +24,25 @@ export default async function FeaturedArticles() {
 	}
 
 	return (
-		<section className="px-8 md:px-16 lg:px-24 py-12 md:py-16">
-			{/* Section header */}
-			<div className="flex items-start justify-between mb-8">
+		<section className="px-8 py-12 md:px-16 md:py-16 lg:px-24">
+			<div className="mb-8 flex items-start justify-between">
 				<div>
-					<h2 className="text-2xl font-bold mb-1">Featured</h2>
+					<h2 className="mb-1 text-2xl font-bold">Featured</h2>
 					<p className="text-sm text-foreground/50">
 						Handpicked stories from the team.
 					</p>
 				</div>
 				<Link
 					href="/articles"
-					className="text-sm text-foreground/50 hover:text-foreground transition-colors mt-1"
+					className="mt-1 text-sm text-foreground/50 transition-colors hover:text-foreground"
 				>
 					View all
 				</Link>
 			</div>
 
-			{/* Articles grid */}
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+			<div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
 				{articles.slice(0, 6).map((article) => (
-				<ArticleCard key={article.id} article={article} />
+					<ArticleCard key={article.id} article={article} />
 				))}
 			</div>
 		</section>
