@@ -15,7 +15,6 @@ const headers = {
 
 /**
  * Fetches the latest breaking news item from the news API.
- * Uses Incremental Static Regeneration (ISR) with 60-second revalidation.
  * Gracefully returns null if API is unavailable or request fails.
  * @async
  * @returns {Promise<BreakingNewsItem|null>} The breaking news item or null if unavailable

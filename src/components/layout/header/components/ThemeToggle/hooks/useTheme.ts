@@ -51,8 +51,9 @@ function getSnapshot() {
 
 /**
  * Gets theme snapshot for server-side rendering.
- * Always returns false to avoid hydration mismatch.
- * @returns {boolean} Always false for SSR safety
+ * Returns the initial theme state to match server-rendered HTML and prevent hydration mismatch.
+ * @param {boolean} initialIsDark - The initial dark mode state from the server
+ * @returns {boolean} The initial dark mode state for hydration
  */
 function getServerSnapshot(initialIsDark: boolean) {
 	return initialIsDark;

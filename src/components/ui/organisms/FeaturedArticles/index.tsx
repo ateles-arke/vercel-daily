@@ -1,9 +1,9 @@
 import { cacheLife, cacheTag } from 'next/cache';
 import Link from 'next/link';
-import ArticleCard from '@/components/ui/molecules/ArticleCard';
+import ArticleCard from '@/components/shared/ArticleCard';
 import { getFeaturedArticles } from '@/services/newsApi';
-import FeaturedArticlesError from './components/Error';
-import NoArticlesFound from './components/NoArticlesFound';
+import Error from '@/components/ui/organisms/FeaturedArticles/components/Error';
+import NoArticlesFound from '@/components/ui/organisms/FeaturedArticles/components/NoArticlesFound';
 
 /**
  * Featured articles section displaying a grid of at least 6 handpicked articles.
@@ -24,7 +24,7 @@ export default async function FeaturedArticles() {
 	);
 
 	if (articlesResult.hasError) {
-		return <FeaturedArticlesError />;
+		return <Error />;
 	}
 
 	const articles = articlesResult.data;

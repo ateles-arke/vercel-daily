@@ -2,8 +2,10 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { cacheLife, cacheTag } from 'next/cache';
 import BreakingNewsBanner from '@/components/ui/organisms/BreakingNewsBanner';
+import BreakingNewsSkeleton from '@/components/ui/organisms/BreakingNewsBanner/Skeleton';
 import HeroSection from '@/components/ui/organisms/HeroSection';
 import FeaturedArticles from '@/components/ui/organisms/FeaturedArticles';
+import FeaturedArticlesSkeleton from '@/components/ui/organisms/FeaturedArticles/Skeleton';
 import { getBreakingNews } from '@/services/newsApi';
 
 export const metadata: Metadata = {
@@ -44,11 +46,11 @@ async function BreakingNewsSection() {
 export default function Home() {
 	return (
 		<main>
-			<Suspense fallback={'...Loading breaking news'}>
+			<Suspense fallback={<BreakingNewsSkeleton />}>
 				<BreakingNewsSection />
 			</Suspense>
 			<HeroSection />
-			<Suspense fallback={'...Loading featured articles'}>
+			<Suspense fallback={<FeaturedArticlesSkeleton />}>
 				<FeaturedArticles />
 			</Suspense>
 		</main>

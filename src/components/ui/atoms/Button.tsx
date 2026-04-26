@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { cn } from '@/lib/cn';
 
 type ButtonVariant = 'primary' | 'secondary';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -99,8 +100,13 @@ export default function Button({
 	const variantStyles = variant === 'primary' ? primaryStyles : secondaryStyles;
 	const widthStyles = fullWidth ? 'w-full' : '';
 
-	const combinedClassName =
-		`${baseStyles} ${sizeStyles[size]} ${variantStyles} ${widthStyles} ${className}`.trim();
+	const combinedClassName = cn(
+		baseStyles,
+		sizeStyles[size],
+		variantStyles,
+		widthStyles,
+		className,
+	);
 
 	return (
 		<button

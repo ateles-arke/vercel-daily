@@ -10,6 +10,7 @@ interface ArticleCardProps {
 /**
  * Card component displaying a single article with image, category, date, headline, and summary.
  * Links headline to the article detail page via slug.
+ * Feature-specific component (article routing logic) — kept in shared/ not ui/.
  * @param {ArticleCardProps} props - The article data to display
  * @returns {React.ReactNode} The article card element
  */
