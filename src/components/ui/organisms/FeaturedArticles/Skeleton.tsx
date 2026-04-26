@@ -1,6 +1,6 @@
 /**
  * Skeleton loader for featured articles grid.
- * Displays 3 placeholder cards matching the layout of FeaturedArticles during data loading.
+ * Displays 6 placeholder cards matching the layout of FeaturedArticles during data loading..
  * @returns {React.ReactNode} Skeleton UI element
  */
 export default function FeaturedArticlesSkeleton() {

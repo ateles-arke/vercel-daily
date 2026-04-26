@@ -15,42 +15,31 @@ const headers = {
 
 /**
  * Fetches the latest breaking news item from the news API.
- * Gracefully returns null if API is unavailable or request fails.
+ * Throws on non-OK responses so callers can handle errors via error boundaries.
  * @async
  * @returns {Promise<BreakingNewsItem|null>} The breaking news item or null if unavailable
+ * @throws {Error} When the API returns a non-OK status or the request fails
  */
 export async function getBreakingNews(): Promise<BreakingNewsItem | null> {
-	try {
-		let res = await fetch(`${BASE_URL}/breaking-news`, {
-			headers,
-		});
+	let res = await fetch(`${BASE_URL}/breaking-news`, {
+		headers,
+	});
 
-		// Fallback to query parameter if header fails
-		if (!res.ok && res.status === 401) {
-			res = await fetch(
-				`${BASE_URL}/breasing-news?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(BYPASS_TOKEN)}`,
-			);
-		}
-
-		if (!res.ok) {
-			console.error(
-				`[Breaking News API] Status ${res.status}: ${res.statusText}`,
-			);
-			return null;
-		}
-
-		const json: BreakingNewsResponse = await res.json();
-		if (json.success && json.data) {
-			console.log(`[Breaking News API] ✓ Loaded: "${json.data.headline}"`);
-		}
-		return json.success ? json.data : null;
-	} catch (error) {
-		console.error(
-			'[Breaking News API] Error:',
-			error instanceof Error ? error.message : String(error),
+	// Fallback to query parameter if header-based bypass fails
+	if (!res.ok && res.status === 401) {
+		res = await fetch(
+			`${BASE_URL}/breaking-news?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(BYPASS_TOKEN)}`,
 		);
-		return null;
 	}
+
+	if (!res.ok) {
+		throw new Error(
+			`[Breaking News API] Status ${res.status}: ${res.statusText}`,
+		);
+	}
+
+	const json: BreakingNewsResponse = await res.json();
+	return json.success ? json.data : null;
 }
 
 /**

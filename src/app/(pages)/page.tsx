@@ -33,9 +33,8 @@ async function BreakingNewsSection() {
 	cacheTag('breaking-news');
 
 	const news = await getBreakingNews();
-	// Use fallback headline until API authentication is resolved
-	const headline = news?.headline || 'Vercel Introduces the AI Cloud Platform';
-	return <BreakingNewsBanner headline={headline} />;
+	if (!news) return null;
+	return <BreakingNewsBanner headline={news.headline} />;
 }
 
 /**
