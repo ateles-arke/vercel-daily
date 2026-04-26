@@ -19,10 +19,11 @@ const headers = {
 
 /**
  * Fetches the latest breaking news item from the news API.
+ * Used for rendering the breaking news banner at the top of pages.
  * Throws on non-OK responses so callers can handle errors via error boundaries.
  * @async
  * @returns {Promise<BreakingNewsItem|null>} The breaking news item or null if unavailable
- * @throws {Error} When the API returns a non-OK status or the request fails
+ * @throws {Error} When the API returns a non-OK status after retries or the request fails
  */
 export async function getBreakingNews(): Promise<BreakingNewsItem | null> {
 	let res = await fetch(`${BASE_URL}/breaking-news`, {
@@ -51,10 +52,11 @@ export async function getBreakingNews(): Promise<BreakingNewsItem | null> {
 
 /**
  * Fetches featured articles from the news API.
+ * Used for displaying the featured articles section on the homepage.
  * Throws on non-OK responses so callers can handle errors via error boundaries.
  * @async
- * @returns {Promise<Article[]>} Array of featured articles
- * @throws {Error} When the API returns a non-OK status or the request fails
+ * @returns {Promise<Article[]>} Array of featured articles, empty array if unavailable
+ * @throws {Error} When the API returns a non-OK status after retries or the request fails
  */
 export async function getFeaturedArticles(): Promise<Article[]> {
 	const res = await fetch(`${BASE_URL}/articles?featured=true`, {
@@ -74,9 +76,12 @@ export async function getFeaturedArticles(): Promise<Article[]> {
 /**
  * Fetches a single article by slug.
  * Cached for article-detail rendering and metadata generation.
+ * Uses Next.js 16 cacheComponents with cacheLife('hours') for server-side revalidation.
  * Returns null for 404 responses so callers can delegate to notFound().
- * @param {string} slug - Article slug route param
+ * @async
+ * @param {string} slug - Article slug route param (URL-encoded automatically for safety)
  * @returns {Promise<ArticleDetail|null>} Full article detail or null if not found
+ * @throws {Error} When the API returns a non-OK status (except 404) after retries
  */
 export async function getArticleBySlug(
 	slug: string,
@@ -113,7 +118,11 @@ export async function getArticleBySlug(
 
 /**
  * Fetches trending articles for article discovery and static generation.
- * @returns {Promise<ArticleDetail[]>} Trending article collection
+ * Cached for static generation of article detail pages via generateStaticParams.
+ * Uses Next.js 16 cacheComponents with cacheLife('hours') for server-side revalidation.
+ * @async
+ * @returns {Promise<ArticleDetail[]>} Trending article collection, empty array if unavailable
+ * @throws {Error} When the API returns a non-OK status after retries or the request fails
  */
 export async function getTrendingArticles(): Promise<ArticleDetail[]> {
 	'use cache';
