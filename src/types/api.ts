@@ -140,3 +140,26 @@ export interface TrendingArticlesResponse {
 	success: boolean;
 	data: ArticleDetail[];
 }
+
+/**
+ * Pagination metadata returned by paginated list endpoints.
+ * Contains current page, page size, total records, and total pages.
+ * @interface PaginationMeta
+ */
+export interface PaginationMeta {
+	page: number;
+	pageSize: number;
+	total: number;
+	totalPages: number;
+}
+
+/**
+ * API response structure for paginated articles list endpoint.
+ * Includes success status, article data array, and pagination metadata.
+ * @interface PaginatedArticlesResponse
+ */
+export interface PaginatedArticlesResponse {
+	success: boolean;
+	data: Article[];
+	meta: PaginationMeta;
+}
