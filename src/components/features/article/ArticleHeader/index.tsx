@@ -8,7 +8,9 @@ interface ArticleHeaderProps {
 
 function formatPublishedDate(publishedAt: string): string {
 	const parsedDate = parseISO(publishedAt);
-	return isValid(parsedDate) ? format(parsedDate, 'MMMM d, yyyy') : 'Unknown date';
+	return isValid(parsedDate)
+		? format(parsedDate, 'MMMM d, yyyy')
+		: 'Unknown date';
 }
 
 function getInitials(name: string): string {
@@ -77,7 +79,7 @@ export default function ArticleHeader({ article }: ArticleHeaderProps) {
 				)}
 			</div>
 
-			<div className="relative mt-10 aspect-[16/9] overflow-hidden rounded-3xl border border-foreground/10 bg-foreground/5">
+			<div className="relative mt-10 aspect-video overflow-hidden rounded-3xl border border-foreground/10 bg-foreground/5">
 				<Image
 					src={article.image}
 					alt={article.title}
