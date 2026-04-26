@@ -9,7 +9,7 @@ export default function BreakingNewsSkeleton() {
 			<div className="rounded-lg border border-foreground/10 bg-foreground/3 p-4 md:p-6">
 				<div className="flex items-start gap-4">
 					{/* Icon placeholder */}
-					<div className="h-6 w-6 flex-shrink-0 rounded bg-foreground/10" />
+					<div className="h-6 w-6 shrink-0 rounded bg-foreground/10" />
 					{/* Text placeholder */}
 					<div className="flex-1 space-y-2">
 						<div className="h-4 w-3/4 rounded bg-foreground/10" />

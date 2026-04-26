@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import ArticleCard from '@/components/features/article/ArticleCard';
 import Pagination from '@/components/ui/atoms/Pagination';
 import ArticlesGridSkeleton from '@/components/features/article/ArticlesGridSkeleton';
+import BackButton from '@/components/shared/BackButton';
 import { getAllArticles } from '@/services/newsApi';
 
 const PAGE_SIZE = 12;
@@ -88,9 +89,14 @@ async function ArticlesGrid({
  * @param {AllArticlesPageProps} props - Page props including async searchParams
  * @returns {React.ReactNode} Page shell with streamed articles grid
  */
-export default function AllArticlesPage({ searchParams }: AllArticlesPageProps) {
+export default function AllArticlesPage({
+	searchParams,
+}: AllArticlesPageProps) {
 	return (
 		<main className="px-8 py-12 md:px-16 md:py-16 lg:px-24">
+			{/* Back navigation */}
+			<BackButton className="mb-6" label="Back" />
+
 			{/* Static header — renders immediately */}
 			<h1 className="mb-8 text-3xl font-black tracking-tight">Articles</h1>
 
