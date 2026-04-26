@@ -1,6 +1,6 @@
 import BreakingNewsSkeleton from '@/components/ui/organisms/BreakingNewsBanner/Skeleton';
 import HeroSection from '@/components/ui/organisms/HeroSection';
-import FeaturedArticlesSkeleton from '@/components/ui/organisms/FeaturedArticles/Skeleton';
+import FeaturedArticlesSkeleton from '@/components/features/article/FeaturedArticles/Skeleton';
 
 /**
  * Loading state for the home page.

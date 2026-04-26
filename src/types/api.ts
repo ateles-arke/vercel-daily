@@ -31,6 +31,52 @@ export interface Article {
 	featured: boolean;
 }
 
+export interface ArticleAuthor {
+	name: string;
+	avatar: string;
+}
+
+export interface ArticleParagraphBlock {
+	type: 'paragraph';
+	text: string;
+}
+
+export interface ArticleHeadingBlock {
+	type: 'heading';
+	level: number;
+	text: string;
+}
+
+export interface ArticleUnorderedListBlock {
+	type: 'unordered-list';
+	items: string[];
+}
+
+export interface ArticleOrderedListBlock {
+	type: 'ordered-list';
+	items: string[];
+}
+
+export interface ArticleImageBlock {
+	type: 'image';
+	src: string;
+	alt?: string;
+	caption?: string;
+}
+
+export type ArticleContentBlock =
+	| ArticleParagraphBlock
+	| ArticleHeadingBlock
+	| ArticleUnorderedListBlock
+	| ArticleOrderedListBlock
+	| ArticleImageBlock;
+
+export interface ArticleDetail extends Article {
+	content: ArticleContentBlock[];
+	author: ArticleAuthor;
+	tags: string[];
+}
+
 /**
  * API response structure for the articles list endpoint.
  * @interface ArticlesResponse
@@ -38,4 +84,14 @@ export interface Article {
 export interface ArticlesResponse {
 	success: boolean;
 	data: Article[];
+}
+
+export interface ArticleDetailResponse {
+	success: boolean;
+	data: ArticleDetail;
+}
+
+export interface TrendingArticlesResponse {
+	success: boolean;
+	data: ArticleDetail[];
 }

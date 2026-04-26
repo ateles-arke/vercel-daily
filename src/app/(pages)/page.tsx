@@ -4,8 +4,8 @@ import { cacheLife, cacheTag } from 'next/cache';
 import BreakingNewsBanner from '@/components/ui/organisms/BreakingNewsBanner';
 import BreakingNewsSkeleton from '@/components/ui/organisms/BreakingNewsBanner/Skeleton';
 import HeroSection from '@/components/ui/organisms/HeroSection';
-import FeaturedArticles from '@/components/ui/organisms/FeaturedArticles';
-import FeaturedArticlesSkeleton from '@/components/ui/organisms/FeaturedArticles/Skeleton';
+import FeaturedArticles from '@/components/features/article/FeaturedArticles';
+import FeaturedArticlesSkeleton from '@/components/features/article/FeaturedArticles/Skeleton';
 import { getBreakingNews } from '@/services/newsApi';
 
 export const metadata: Metadata = {
