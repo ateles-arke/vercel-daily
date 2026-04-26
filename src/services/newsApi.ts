@@ -8,6 +8,7 @@ import type {
 	ArticleDetailResponse,
 	ArticlesResponse,
 	TrendingArticlesResponse,
+	PaginationMeta,
 } from '@/types/api';
 
 const BASE_URL = process.env.NEWS_API_BASE_URL!;
@@ -55,6 +56,46 @@ export async function getBreakingNews(): Promise<BreakingNewsItem | null> {
 
 	const json: BreakingNewsResponse = await res.json();
 	return json.success ? json.data : null;
+}
+
+/**
+ * Fetches all articles and paginates them locally.
+ * The API returns all articles in a single response; pagination is computed client-side.
+ * Cached with 'hours' profile — article list changes infrequently.
+ * @async
+ * @param {number} page - 1-based page number
+ * @param {number} pageSize - Number of articles per page (default 12)
+ * @returns {Promise<{ articles: Article[]; meta: PaginationMeta }>} Sliced articles and computed pagination metadata
+ * @throws {Error} When the API returns a non-OK status or the request fails
+ */
+export async function getAllArticles(
+	page = 1,
+	pageSize = 12,
+): Promise<{ articles: Article[]; meta: PaginationMeta }> {
+	'use cache';
+	cacheLife('hours');
+	cacheTag('articles');
+
+	const res = await fetchWithBypassRetry(`${BASE_URL}/articles`);
+
+	if (!res.ok) {
+		throw new Error(
+			`[All Articles API] Status ${res.status}: ${res.statusText}`,
+		);
+	}
+
+	const json: ArticlesResponse = await res.json();
+	const all: Article[] = json.success ? json.data : [];
+
+	const total = all.length;
+	const totalPages = Math.max(1, Math.ceil(total / pageSize));
+	const safePage = Math.min(Math.max(1, page), totalPages);
+	const start = (safePage - 1) * pageSize;
+
+	return {
+		articles: all.slice(start, start + pageSize),
+		meta: { page: safePage, pageSize, total, totalPages },
+	};
 }
 
 /**
