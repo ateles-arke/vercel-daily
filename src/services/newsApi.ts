@@ -18,6 +18,25 @@ const headers = {
 };
 
 /**
+ * Performs a fetch with the shared API headers and retries once with bypass query params on 401.
+ * Keeps Vercel protection fallback behavior consistent across endpoints that support it.
+ * @async
+ * @param {string} url - Endpoint URL to request
+ * @returns {Promise<Response>} The initial response or the retry response when a bypass retry was needed
+ */
+async function fetchWithBypassRetry(url: string): Promise<Response> {
+	let response = await fetch(url, { headers });
+
+	if (!response.ok && response.status === 401) {
+		response = await fetch(buildBypassUrl(url, API_BYPASS_TOKEN), {
+			headers,
+		});
+	}
+
+	return response;
+}
+
+/**
  * Fetches the latest breaking news item from the news API.
  * Used for rendering the breaking news banner at the top of pages.
  * Throws on non-OK responses so callers can handle errors via error boundaries.
@@ -26,19 +45,7 @@ const headers = {
  * @throws {Error} When the API returns a non-OK status after retries or the request fails
  */
 export async function getBreakingNews(): Promise<BreakingNewsItem | null> {
-	let res = await fetch(`${BASE_URL}/breaking-news`, {
-		headers,
-	});
-
-	// Fallback to query parameter if header-based bypass fails
-	if (!res.ok && res.status === 401) {
-		res = await fetch(
-			buildBypassUrl(`${BASE_URL}/breaking-news`, API_BYPASS_TOKEN),
-			{
-				headers,
-			},
-		);
-	}
+	const res = await fetchWithBypassRetry(`${BASE_URL}/breaking-news`);
 
 	if (!res.ok) {
 		throw new Error(
@@ -92,17 +99,7 @@ export async function getArticleBySlug(
 	cacheTag(`article:${slug}`);
 
 	const encodedSlug = encodeURIComponent(slug);
-
-	let res = await fetch(`${BASE_URL}/articles/${encodedSlug}`, {
-		headers,
-	});
-
-	if (!res.ok && res.status === 401) {
-		res = await fetch(
-			buildBypassUrl(`${BASE_URL}/articles/${encodedSlug}`, API_BYPASS_TOKEN),
-			{ headers },
-		);
-	}
+	const res = await fetchWithBypassRetry(`${BASE_URL}/articles/${encodedSlug}`);
 
 	if (res.status === 404) {
 		return null;
@@ -129,17 +126,7 @@ export async function getTrendingArticles(): Promise<ArticleDetail[]> {
 	cacheLife('hours');
 	cacheTag('articles');
 	cacheTag('trending-articles');
-
-	let res = await fetch(`${BASE_URL}/articles/trending`, {
-		headers,
-	});
-
-	if (!res.ok && res.status === 401) {
-		res = await fetch(
-			buildBypassUrl(`${BASE_URL}/articles/trending`, API_BYPASS_TOKEN),
-			{ headers },
-		);
-	}
+	const res = await fetchWithBypassRetry(`${BASE_URL}/articles/trending`);
 
 	if (!res.ok) {
 		throw new Error(
