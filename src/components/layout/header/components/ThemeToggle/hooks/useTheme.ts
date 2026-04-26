@@ -67,10 +67,8 @@ function getServerSnapshot(initialIsDark: boolean) {
  * @returns {{isDark: boolean, toggle: () => void}} Current theme state and toggle function
  */
 export function useTheme(initialIsDark: boolean) {
-	const isDark = useSyncExternalStore(
-		subscribeToStorage,
-		getSnapshot,
-		() => getServerSnapshot(initialIsDark),
+	const isDark = useSyncExternalStore(subscribeToStorage, getSnapshot, () =>
+		getServerSnapshot(initialIsDark),
 	);
 
 	useLayoutEffect(() => {

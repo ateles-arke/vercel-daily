@@ -1,8 +1,9 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
+import { getInitialThemeConfig } from '@/lib/theme';
 import './globals.css';
 
 const geistSans = Geist({
@@ -38,30 +39,34 @@ export const metadata: Metadata = {
 	},
 };
 
-/**
- * Root layout component wrapping all pages of the application.
- * Provides global styles, fonts, and persistent header/footer navigation.
- * Uses Geist font family from Vercel for modern typography.
- * @param {Readonly<{children: React.ReactNode}>} props - Child pages to render
- * @returns {React.ReactNode} The HTML document structure with header, children, and footer
- */
-export default async function RootLayout({
+async function ThemeInitializer() {
+	const themeCookie = (await cookies()).get('theme')?.value ?? null;
+	const baseClassName = `${geistSans.variable} ${geistMono.variable} h-full antialiased`;
+	const { isDark } = getInitialThemeConfig(baseClassName, themeCookie);
+	return <Header initialIsDark={isDark} />;
+}
+
+export default function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const themeCookie = (await cookies()).get('theme')?.value;
-	const isDark = themeCookie ? themeCookie === 'dark' : true;
-	const htmlClassName = `${geistSans.variable} ${geistMono.variable} h-full antialiased${isDark ? ' dark' : ''}`;
+	const baseClassName = `${geistSans.variable} ${geistMono.variable} h-full antialiased`;
 
 	return (
-		<html
-			lang="en"
-			suppressHydrationWarning
-			className={htmlClassName}
-		>
+		<html lang="en" suppressHydrationWarning className={baseClassName}>
+			<head>
+				{/* Inline script runs before first paint to apply .dark without flash */}
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `(function(){try{var c=document.cookie.split(';').find(function(s){return s.trim().startsWith('theme=');});var t=c?decodeURIComponent(c.trim().slice(6)):'dark';if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`,
+					}}
+				/>
+			</head>
 			<body className="min-h-full flex flex-col">
-				<Header initialIsDark={isDark} />
+				<Suspense fallback={<div className="h-14" />}>
+					<ThemeInitializer />
+				</Suspense>
 				{children}
 			</body>
 		</html>
