@@ -1,26 +1,65 @@
-import type { BreakingNewsItem, BreakingNewsResponse } from '@/types/api';
+import type {
+	BreakingNewsItem,
+	BreakingNewsResponse,
+	Article,
+	ArticlesResponse,
+} from '@/types/api';
 
 const BASE_URL = process.env.NEWS_API_BASE_URL!;
+const BYPASS_TOKEN = process.env.NEWS_API_BYPASS_TOKEN!;
 
 const headers = {
-	'x-vercel-protection-bypass': process.env.NEWS_API_BYPASS_TOKEN!,
+	accept: 'application/json',
+	'x-vercel-protection-bypass': BYPASS_TOKEN,
 };
 
 /**
  * Fetches the latest breaking news item from the news API.
- * Uses Incremental Static Regeneration (ISR) with 60-second revalidation.
- * Gracefully returns null if API is unavailable or request fails.
+ * Throws on non-OK responses so callers can handle errors via error boundaries.
  * @async
  * @returns {Promise<BreakingNewsItem|null>} The breaking news item or null if unavailable
+ * @throws {Error} When the API returns a non-OK status or the request fails
  */
 export async function getBreakingNews(): Promise<BreakingNewsItem | null> {
-	const res = await fetch(`${BASE_URL}/breaking-news`, {
+	let res = await fetch(`${BASE_URL}/breaking-news`, {
 		headers,
-		next: { revalidate: 60 },
 	});
 
-	if (!res.ok) return null;
+	// Fallback to query parameter if header-based bypass fails
+	if (!res.ok && res.status === 401) {
+		res = await fetch(
+			`${BASE_URL}/breaking-news?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${encodeURIComponent(BYPASS_TOKEN)}`,
+		);
+	}
+
+	if (!res.ok) {
+		throw new Error(
+			`[Breaking News API] Status ${res.status}: ${res.statusText}`,
+		);
+	}
 
 	const json: BreakingNewsResponse = await res.json();
 	return json.success ? json.data : null;
+}
+
+/**
+ * Fetches featured articles from the news API.
+ * Throws on non-OK responses so callers can handle errors via error boundaries.
+ * @async
+ * @returns {Promise<Article[]>} Array of featured articles
+ * @throws {Error} When the API returns a non-OK status or the request fails
+ */
+export async function getFeaturedArticles(): Promise<Article[]> {
+	const res = await fetch(`${BASE_URL}/articles?featured=true`, {
+		headers,
+	});
+
+	if (!res.ok) {
+		throw new Error(
+			`[Featured Articles API] Status ${res.status}: ${res.statusText}`,
+		);
+	}
+
+	const json: ArticlesResponse = await res.json();
+	return json.success ? json.data : [];
 }

@@ -51,11 +51,12 @@ function getSnapshot() {
 
 /**
  * Gets theme snapshot for server-side rendering.
- * Always returns false to avoid hydration mismatch.
- * @returns {boolean} Always false for SSR safety
+ * Returns the initial theme state to match server-rendered HTML and prevent hydration mismatch.
+ * @param {boolean} initialIsDark - The initial dark mode state from the server
+ * @returns {boolean} The initial dark mode state for hydration
  */
-function getServerSnapshot() {
-	return false;
+function getServerSnapshot(initialIsDark: boolean) {
+	return initialIsDark;
 }
 
 /**
@@ -66,11 +67,9 @@ function getServerSnapshot() {
  * Listens to storage events for cross-tab theme synchronization.
  * @returns {{isDark: boolean, toggle: () => void}} Current theme state and toggle function
  */
-export function useTheme() {
-	const isDark = useSyncExternalStore(
-		subscribeToStorage,
-		getSnapshot,
-		getServerSnapshot,
+export function useTheme(initialIsDark: boolean) {
+	const isDark = useSyncExternalStore(subscribeToStorage, getSnapshot, () =>
+		getServerSnapshot(initialIsDark),
 	);
 
 	useLayoutEffect(() => {

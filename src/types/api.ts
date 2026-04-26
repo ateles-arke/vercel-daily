@@ -14,3 +14,28 @@ export interface BreakingNewsResponse {
 	success: boolean;
 	data: BreakingNewsItem;
 }
+
+/**
+ * Structure of a single article from the news API.
+ * Used for featured article grids and article detail pages.
+ * @interface Article
+ */
+export interface Article {
+	id: string;
+	slug: string;
+	title: string;
+	excerpt: string;
+	category: string;
+	publishedAt: string;
+	image: string;
+	featured: boolean;
+}
+
+/**
+ * API response structure for the articles list endpoint.
+ * @interface ArticlesResponse
+ */
+export interface ArticlesResponse {
+	success: boolean;
+	data: Article[];
+}
