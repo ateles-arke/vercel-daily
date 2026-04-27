@@ -25,6 +25,19 @@ export const metadata: Metadata = {
 	},
 };
 
+function getSingleParam(value: string | string[] | undefined): string {
+	return Array.isArray(value) ? (value[0] ?? '') : (value ?? '');
+}
+
+function parsePageNumber(value: string): number {
+	if (!/^\d+$/.test(value)) {
+		return 1;
+	}
+
+	const parsed = Number.parseInt(value, 10);
+	return parsed >= 1 ? parsed : 1;
+}
+
 /**
  * Resolves route search params outside the cached grid component.
  * This keeps runtime params out of the cache scope while preserving the page shell.
@@ -38,11 +51,7 @@ async function ArticlesPageContent({
 	searchParams: Promise<Record<string, string | string[]>>;
 }) {
 	const params = await searchParams;
-	const rawPage = params.page;
-	const currentPage = Math.max(
-		1,
-		Number(Array.isArray(rawPage) ? rawPage[0] : (rawPage ?? '1')) || 1,
-	);
+	const currentPage = parsePageNumber(getSingleParam(params.page));
 
 	return <ArticlesGrid currentPage={currentPage} />;
 }
@@ -90,7 +99,7 @@ async function ArticlesGrid({ currentPage }: { currentPage: number }) {
 			{meta.totalPages > 1 && (
 				<div className="mt-12 flex justify-center">
 					<Pagination
-						currentPage={currentPage}
+						currentPage={meta.page}
 						totalPages={meta.totalPages}
 						basePath="/articles"
 					/>
