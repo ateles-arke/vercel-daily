@@ -6,6 +6,7 @@ import SubscribeButton from './components/SubscribeButton';
 
 interface HeaderProps {
 	initialIsDark: boolean;
+	initialIsSubscribed: boolean;
 }
 
 /**
@@ -14,7 +15,10 @@ interface HeaderProps {
  * and user controls for theme toggling and subscription management.
  * @returns {React.ReactNode} The header navigation element
  */
-export default function Header({ initialIsDark }: HeaderProps) {
+export default function Header({
+	initialIsDark,
+	initialIsSubscribed,
+}: HeaderProps) {
 	return (
 		<header className="sticky top-0 z-50 w-full border-b border-(--header-border) bg-(--header-bg) transition-colors duration-300">
 			<div className="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4">
@@ -41,7 +45,7 @@ export default function Header({ initialIsDark }: HeaderProps) {
 
 				{/* Right side */}
 				<div className="ml-auto flex items-center gap-2">
-					<SubscribeButton />
+					<SubscribeButton initialIsSubscribed={initialIsSubscribed} />
 					<ThemeToggle initialIsDark={initialIsDark} />
 				</div>
 			</div>
