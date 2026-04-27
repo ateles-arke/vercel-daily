@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { cacheLife, cacheTag } from 'next/cache';
 import type { Metadata } from 'next';
 import ArticleCard from '@/components/features/article/ArticleCard';
 import Pagination from '@/components/ui/atoms/Pagination';
@@ -25,13 +26,13 @@ export const metadata: Metadata = {
 };
 
 /**
- * Inner async component that fetches and renders the articles grid.
- * Separated so the page shell renders immediately and streams this in via Suspense.
+ * Resolves route search params outside the cached grid component.
+ * This keeps runtime params out of the cache scope while preserving the page shell.
  * @async
  * @param {{ searchParams: Promise<Record<string, string | string[]>> }} props
- * @returns {Promise<React.ReactNode>} The articles grid with pagination controls
+ * @returns {Promise<React.ReactNode>} Cached articles grid keyed by page number
  */
-async function ArticlesGrid({
+async function ArticlesPageContent({
 	searchParams,
 }: {
 	searchParams: Promise<Record<string, string | string[]>>;
@@ -42,6 +43,22 @@ async function ArticlesGrid({
 		1,
 		Number(Array.isArray(rawPage) ? rawPage[0] : (rawPage ?? '1')) || 1,
 	);
+
+	return <ArticlesGrid currentPage={currentPage} />;
+}
+
+/**
+ * Cached articles grid for a specific page number.
+ * Adds an explicit cache boundary for the paginated slice rendered under Suspense.
+ * @async
+ * @param {{ currentPage: number }} props - Current page number derived from route params
+ * @returns {Promise<React.ReactNode>} The articles grid with pagination controls
+ */
+async function ArticlesGrid({ currentPage }: { currentPage: number }) {
+	'use cache';
+	cacheLife('hours');
+	cacheTag('articles');
+	cacheTag(`articles-page:${currentPage}`);
 
 	const { articles, meta } = await getAllArticles(currentPage, PAGE_SIZE);
 
@@ -102,7 +119,7 @@ export default function AllArticlesPage({
 
 			{/* Dynamic content — streams in with skeleton fallback */}
 			<Suspense fallback={<ArticlesGridSkeleton />}>
-				<ArticlesGrid searchParams={searchParams} />
+				<ArticlesPageContent searchParams={searchParams} />
 			</Suspense>
 		</main>
 	);
