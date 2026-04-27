@@ -16,20 +16,20 @@ interface SubscribeNowButtonProps {
 export default function SubscribeNowButton({
 	initialIsSubscribed,
 }: SubscribeNowButtonProps) {
-	const { isPending, isSubscribed, subscribe } = useSubscription(
-		initialIsSubscribed,
-	);
+	const { isPending, isSubscribed, subscribe } =
+		useSubscription(initialIsSubscribed);
 
 	return (
 		<Button
 			type="button"
 			variant="primary"
-			size="lg"
+			size="md"
+			fullWidth
 			onClick={() => {
 				void subscribe();
 			}}
 			isLoading={isPending}
-			className="rounded-full px-6"
+			className="min-h-11 rounded-full px-4 text-sm whitespace-nowrap"
 		>
 			{isSubscribed ? 'Refreshing access...' : 'Subscribe for full access'}
 		</Button>

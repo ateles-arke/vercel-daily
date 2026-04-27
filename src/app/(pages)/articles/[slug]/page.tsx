@@ -83,27 +83,32 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
 	return (
 		<main className="px-8 py-12 md:px-16 md:py-16 lg:px-24">
-			<div className="mx-auto max-w-360">
+			<div className="mx-auto w-full max-w-[1320.8px]">
 				<BackButton className="mb-8" label="Back" />
 
-				{isSubscribed ? (
-					<div className="grid gap-14 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
-						<article className="min-w-0">
-							<ArticleHeader article={article} />
-							<ArticleContent content={article.content} />
-						</article>
-
-						<TrendingArticlesAside articles={sidebarArticles} />
-					</div>
-				) : (
-					<article className="mx-auto max-w-4xl">
+				<div className="grid gap-14 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
+					<article className="min-w-0">
 						<ArticleHeader article={article} />
-						<ArticlePaywall
-							initialIsSubscribed={isSubscribed}
-							teaserText={getPaywallTeaser(article)}
-						/>
+						{isSubscribed ? (
+							<ArticleContent content={article.content} />
+						) : (
+							<div className="relative max-h-48 overflow-hidden">
+								<p className="text-base leading-8 text-foreground/80">
+									{getPaywallTeaser(article)}
+								</p>
+								<div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />
+							</div>
+						)}
 					</article>
-				)}
+
+					{isSubscribed ? (
+						<TrendingArticlesAside articles={sidebarArticles} />
+					) : (
+						<aside className="self-start lg:sticky lg:top-24">
+							<ArticlePaywall initialIsSubscribed={isSubscribed} />
+						</aside>
+					)}
+				</div>
 			</div>
 		</main>
 	);
