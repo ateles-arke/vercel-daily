@@ -8,6 +8,7 @@ import type {
 	ArticleDetailResponse,
 	ArticlesResponse,
 	TrendingArticlesResponse,
+	PaginationMeta,
 } from '@/types/api';
 
 const BASE_URL = process.env.NEWS_API_BASE_URL!;
@@ -37,6 +38,31 @@ async function fetchWithBypassRetry(url: string): Promise<Response> {
 }
 
 /**
+ * Fetches the full article collection used by list-like experiences.
+ * Cached once so article listing pages can derive their own filtered views
+ * without repeating the underlying API request.
+ * @async
+ * @returns {Promise<Article[]>} Full article collection
+ * @throws {Error} When the API returns a non-OK status or the request fails
+ */
+async function fetchArticlesCollection(): Promise<Article[]> {
+	'use cache';
+	cacheLife('hours');
+	cacheTag('articles');
+
+	const res = await fetchWithBypassRetry(`${BASE_URL}/articles`);
+
+	if (!res.ok) {
+		throw new Error(
+			`[All Articles API] Status ${res.status}: ${res.statusText}`,
+		);
+	}
+
+	const json: ArticlesResponse = await res.json();
+	return json.success ? json.data : [];
+}
+
+/**
  * Fetches the latest breaking news item from the news API.
  * Used for rendering the breaking news banner at the top of pages.
  * Throws on non-OK responses so callers can handle errors via error boundaries.
@@ -55,6 +81,97 @@ export async function getBreakingNews(): Promise<BreakingNewsItem | null> {
 
 	const json: BreakingNewsResponse = await res.json();
 	return json.success ? json.data : null;
+}
+
+/**
+ * Fetches all articles and paginates them locally.
+ * The API returns all articles in a single response; pagination is computed client-side.
+ * Cached with 'hours' profile — article list changes infrequently.
+ * @async
+ * @param {number} page - 1-based page number
+ * @param {number} pageSize - Number of articles per page (default 12)
+ * @returns {Promise<{ articles: Article[]; meta: PaginationMeta }>} Sliced articles and computed pagination metadata
+ * @throws {Error} When the API returns a non-OK status or the request fails
+ */
+export async function getAllArticles(
+	page = 1,
+	pageSize = 12,
+): Promise<{ articles: Article[]; meta: PaginationMeta }> {
+	const all = await fetchArticlesCollection();
+
+	const total = all.length;
+	const totalPages = Math.max(1, Math.ceil(total / pageSize));
+	const safePage = Math.min(Math.max(1, page), totalPages);
+	const start = (safePage - 1) * pageSize;
+
+	return {
+		articles: all.slice(start, start + pageSize),
+		meta: { page: safePage, pageSize, total, totalPages },
+	};
+}
+
+/**
+ * Fetches article data for the search page.
+ * Uses the cached article collection, derives unique categories, returns the
+ * newest articles by default, and filters server-side from URL params when the
+ * user performs a search.
+ * @async
+ * @param {string} query - Free-text search query
+ * @param {string} category - Optional exact category filter
+ * @param {number} limit - Max number of articles to return
+ * @returns {Promise<{ articles: Article[]; categories: string[]; total: number; hasActiveSearch: boolean }>} Search-ready article data
+ */
+export async function getSearchArticlesData(
+	query = '',
+	category = '',
+	limit = 5,
+): Promise<{
+	articles: Article[];
+	categories: string[];
+	total: number;
+	hasActiveSearch: boolean;
+}> {
+	const allArticles = await fetchArticlesCollection();
+	const normalizedQuery = query.trim().toLowerCase();
+	const normalizedCategory = category.trim().toLowerCase();
+	const hasActiveSearch =
+		normalizedQuery.length > 0 || normalizedCategory.length > 0;
+
+	const sortedArticles = [...allArticles].sort((left, right) => {
+		return (
+			new Date(right.publishedAt).getTime() -
+			new Date(left.publishedAt).getTime()
+		);
+	});
+
+	const categories = Array.from(
+		new Set(
+			allArticles.map((article) => article.category.trim()).filter(Boolean),
+		),
+	).sort((left, right) => left.localeCompare(right));
+
+	const filteredArticles = sortedArticles.filter((article) => {
+		const matchesCategory = normalizedCategory
+			? article.category.toLowerCase() === normalizedCategory
+			: true;
+
+		const matchesQuery = normalizedQuery
+			? [article.title, article.excerpt, article.category].some((value) =>
+					value.toLowerCase().includes(normalizedQuery),
+				)
+			: true;
+
+		return matchesCategory && matchesQuery;
+	});
+
+	const matchingArticles = hasActiveSearch ? filteredArticles : sortedArticles;
+
+	return {
+		articles: matchingArticles.slice(0, limit),
+		categories,
+		total: matchingArticles.length,
+		hasActiveSearch,
+	};
 }
 
 /**

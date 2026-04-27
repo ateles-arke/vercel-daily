@@ -1,13 +1,7 @@
-import Image from 'next/image';
 import Button from '@/components/ui/atoms/Button';
+import BrowseArticlesButton from './components/BrowseArticlesButton';
 
 interface HeroSectionProps {
-	/**
-	 * Callback for browse articles button click
-	 * Optional - button can be stateless for now
-	 */
-	onBrowseClick?: () => void;
-
 	/**
 	 * Callback for subscribe button click
 	 * Optional - button can be stateless for now
@@ -21,10 +15,7 @@ interface HeroSectionProps {
  * @param {HeroSectionProps} props - Optional click handlers
  * @returns {React.ReactNode} The hero banner section
  */
-export default function HeroSection({
-	onBrowseClick,
-	onSubscribeClick,
-}: HeroSectionProps) {
+export default function HeroSection({ onSubscribeClick }: HeroSectionProps) {
 	return (
 		<section className="flex items-center py-16 md:py-20 px-8 md:px-16 lg:px-24">
 			<div className="max-w-2xl">
@@ -48,23 +39,7 @@ export default function HeroSection({
 
 				{/* Buttons */}
 				<div className="flex flex-row gap-3">
-					{/* Browse Articles Button */}
-					<Button
-						variant="primary"
-						size="md"
-						onClick={onBrowseClick}
-						rightIcon={
-							<Image
-								src="/icons/arrow-right.svg"
-								alt=""
-								width={16}
-								height={16}
-								className="invert dark:invert-0"
-							/>
-						}
-					>
-						Browse articles
-					</Button>
+					<BrowseArticlesButton />
 
 					{/* Subscribe Button */}
 					<Button variant="secondary" size="md" onClick={onSubscribeClick}>
