@@ -27,9 +27,10 @@ export function getSubscriptionStateFromCookies(cookieStore: CookieReader): {
 	isSubscribed: boolean;
 } {
 	const token = cookieStore.get(SUBSCRIPTION_TOKEN_COOKIE)?.value ?? null;
-	const isSubscribed =
+	const hasActiveStatus =
 		cookieStore.get(SUBSCRIPTION_STATUS_COOKIE)?.value ===
 		SUBSCRIPTION_STATUS_ACTIVE;
+	const isSubscribed = Boolean(token) && hasActiveStatus;
 
 	return { token, isSubscribed };
 }

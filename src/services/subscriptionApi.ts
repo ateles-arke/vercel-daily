@@ -1,6 +1,12 @@
 import { API_BYPASS_TOKEN, buildBypassUrl } from '@/lib/api-constants';
 
-const BASE_URL = process.env.NEWS_API_BASE_URL!;
+const BASE_URL = process.env.NEWS_API_BASE_URL;
+
+if (!BASE_URL) {
+	throw new Error(
+		'[Subscription API] NEWS_API_BASE_URL environment variable is not configured',
+	);
+}
 
 function createHeaders(subscriptionToken?: string): HeadersInit {
 	return {

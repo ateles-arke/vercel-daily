@@ -53,7 +53,7 @@ pnpm lint
 
 ## Project Structure
 
-```
+```text
 src/
 ├── app/                    # Next.js App Router
 │   ├── (pages)/           # Page routes with shared layout
