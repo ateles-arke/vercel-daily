@@ -163,3 +163,18 @@ export interface PaginatedArticlesResponse {
 	data: Article[];
 	meta: PaginationMeta;
 }
+
+/**
+ * Internal response payload for subscription status endpoints.
+ * @interface SubscriptionStateResponse
+ */
+export interface SubscriptionStateResponse {
+	success: boolean;
+	data: {
+		isSubscribed: boolean;
+	};
+	error?: {
+		code: string;
+		message: string;
+	};
+}

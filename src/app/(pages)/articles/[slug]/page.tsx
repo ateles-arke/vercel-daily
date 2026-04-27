@@ -1,13 +1,29 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import BackButton from '@/components/shared/BackButton';
 import ArticleContent from '@/components/features/article/ArticleContent';
 import ArticleHeader from '@/components/features/article/ArticleHeader';
+import ArticlePaywall from '@/components/features/article/ArticlePaywall';
 import TrendingArticlesAside from '@/components/features/article/TrendingArticlesAside';
+import { getSubscriptionStateFromCookies } from '@/lib/subscription';
 import { getArticleBySlug, getTrendingArticles } from '@/services/newsApi';
 
 interface ArticlePageProps {
 	params: Promise<{ slug: string }>;
+}
+
+function getPaywallTeaser(
+	article: Awaited<ReturnType<typeof getArticleBySlug>>,
+) {
+	if (!article) {
+		return '';
+	}
+
+	const firstParagraph = article.content.find(
+		(block) => block.type === 'paragraph',
+	);
+	return firstParagraph?.text ?? article.excerpt;
 }
 
 export async function generateStaticParams() {
@@ -54,6 +70,7 @@ export async function generateMetadata({
 export default async function ArticlePage({ params }: ArticlePageProps) {
 	const { slug } = await params;
 	const article = await getArticleBySlug(slug);
+	const { isSubscribed } = getSubscriptionStateFromCookies(await cookies());
 
 	if (!article) {
 		notFound();
@@ -69,14 +86,24 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 			<div className="mx-auto max-w-360">
 				<BackButton className="mb-8" label="Back" />
 
-				<div className="grid gap-14 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
-					<article className="min-w-0">
-						<ArticleHeader article={article} />
-						<ArticleContent content={article.content} />
-					</article>
+				{isSubscribed ? (
+					<div className="grid gap-14 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
+						<article className="min-w-0">
+							<ArticleHeader article={article} />
+							<ArticleContent content={article.content} />
+						</article>
 
-					<TrendingArticlesAside articles={sidebarArticles} />
-				</div>
+						<TrendingArticlesAside articles={sidebarArticles} />
+					</div>
+				) : (
+					<article className="mx-auto max-w-4xl">
+						<ArticleHeader article={article} />
+						<ArticlePaywall
+							initialIsSubscribed={isSubscribed}
+							teaserText={getPaywallTeaser(article)}
+						/>
+					</article>
+				)}
 			</div>
 		</main>
 	);
