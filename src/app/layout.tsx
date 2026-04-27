@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Header from '@/components/layout/header';
+import { getSubscriptionStateFromCookies } from '@/lib/subscription';
 import { getInitialThemeConfig } from '@/lib/theme';
 import './globals.css';
 
@@ -42,9 +43,11 @@ export const metadata: Metadata = {
 };
 
 async function ThemeInitializer() {
-	const themeCookie = (await cookies()).get('theme')?.value ?? null;
+	const cookieStore = await cookies();
+	const themeCookie = cookieStore.get('theme')?.value ?? null;
+	const { isSubscribed } = getSubscriptionStateFromCookies(cookieStore);
 	const { isDark } = getInitialThemeConfig(BASE_CLASS_NAME, themeCookie);
-	return <Header initialIsDark={isDark} />;
+	return <Header initialIsDark={isDark} initialIsSubscribed={isSubscribed} />;
 }
 
 export default function RootLayout({
