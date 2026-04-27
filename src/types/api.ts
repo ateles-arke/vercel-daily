@@ -165,16 +165,47 @@ export interface PaginatedArticlesResponse {
 }
 
 /**
- * Internal response payload for subscription status endpoints.
- * @interface SubscriptionStateResponse
+ * Subscription status payload returned on successful subscription API requests.
+ * @interface SubscriptionStateData
  */
-export interface SubscriptionStateResponse {
-	success: boolean;
+export interface SubscriptionStateData {
+	isSubscribed: boolean;
+}
+
+/**
+ * Error payload returned by subscription API endpoints when the request fails.
+ * @interface SubscriptionErrorPayload
+ */
+export interface SubscriptionErrorPayload {
+	code: string;
+	message: string;
+}
+
+/**
+ * Successful subscription API response shape.
+ * @interface SubscriptionStateSuccessResponse
+ */
+export interface SubscriptionStateSuccessResponse {
+	success: true;
 	data: {
 		isSubscribed: boolean;
 	};
-	error?: {
-		code: string;
-		message: string;
-	};
 }
+
+/**
+ * Failed subscription API response shape.
+ * @interface SubscriptionStateErrorResponse
+ */
+export interface SubscriptionStateErrorResponse {
+	success: false;
+	error: SubscriptionErrorPayload;
+}
+
+/**
+ * Internal response payload for subscription status endpoints.
+ * Matches both successful and failed responses from the internal route handlers.
+ * @interface SubscriptionStateResponse
+ */
+export type SubscriptionStateResponse =
+	| SubscriptionStateSuccessResponse
+	| SubscriptionStateErrorResponse;
