@@ -1,6 +1,10 @@
+import { Suspense } from 'react';
+import { cacheLife, cacheTag } from 'next/cache';
 import type { Metadata } from 'next';
 import ArticleCard from '@/components/features/article/ArticleCard';
 import Pagination from '@/components/ui/atoms/Pagination';
+import ArticlesGridSkeleton from '@/components/features/article/ArticlesGridSkeleton';
+import BackButton from '@/components/shared/BackButton';
 import { getAllArticles } from '@/services/newsApi';
 
 const PAGE_SIZE = 12;
@@ -21,37 +25,60 @@ export const metadata: Metadata = {
 	},
 };
 
+function getSingleParam(value: string | string[] | undefined): string {
+	return Array.isArray(value) ? (value[0] ?? '') : (value ?? '');
+}
+
+function parsePageNumber(value: string): number {
+	if (!/^\d+$/.test(value)) {
+		return 1;
+	}
+
+	const parsed = Number.parseInt(value, 10);
+	return parsed >= 1 ? parsed : 1;
+}
+
 /**
- * All articles page with server-side pagination.
- * Reads the ?page search param to determine which page to fetch.
- * Falls back to page 1 for invalid or missing values.
+ * Resolves route search params outside the cached grid component.
+ * This keeps runtime params out of the cache scope while preserving the page shell.
  * @async
- * @param {AllArticlesPageProps} props - Page props including async searchParams
+ * @param {{ searchParams: Promise<Record<string, string | string[]>> }} props
+ * @returns {Promise<React.ReactNode>} Cached articles grid keyed by page number
+ */
+async function ArticlesPageContent({
+	searchParams,
+}: {
+	searchParams: Promise<Record<string, string | string[]>>;
+}) {
+	const params = await searchParams;
+	const currentPage = parsePageNumber(getSingleParam(params.page));
+
+	return <ArticlesGrid currentPage={currentPage} />;
+}
+
+/**
+ * Cached articles grid for a specific page number.
+ * Adds an explicit cache boundary for the paginated slice rendered under Suspense.
+ * @async
+ * @param {{ currentPage: number }} props - Current page number derived from route params
  * @returns {Promise<React.ReactNode>} The articles grid with pagination controls
  */
-export default async function AllArticlesPage({
-	searchParams,
-}: AllArticlesPageProps) {
-	const params = await searchParams;
-	const rawPage = params.page;
-	const currentPage = Math.max(
-		1,
-		Number(Array.isArray(rawPage) ? rawPage[0] : (rawPage ?? '1')) || 1,
-	);
+async function ArticlesGrid({ currentPage }: { currentPage: number }) {
+	'use cache';
+	cacheLife('hours');
+	cacheTag('articles');
+	cacheTag(`articles-page:${currentPage}`);
 
 	const { articles, meta } = await getAllArticles(currentPage, PAGE_SIZE);
 
 	return (
-		<main className="px-8 py-12 md:px-16 md:py-16 lg:px-24">
-			{/* Header */}
-			<div className="mb-8">
-				<h1 className="mb-1 text-3xl font-black tracking-tight">Articles</h1>
-				<p className="text-sm text-foreground/50">
-					{meta.total > 0
-						? `${meta.total} article${meta.total !== 1 ? 's' : ''}`
-						: 'All articles'}
-				</p>
-			</div>
+		<>
+			{/* Article count */}
+			<p className="mb-8 text-sm text-foreground/50">
+				{meta.total > 0
+					? `${meta.total} article${meta.total !== 1 ? 's' : ''}`
+					: 'All articles'}
+			</p>
 
 			{/* Articles grid */}
 			{articles.length === 0 ? (
@@ -72,12 +99,37 @@ export default async function AllArticlesPage({
 			{meta.totalPages > 1 && (
 				<div className="mt-12 flex justify-center">
 					<Pagination
-						currentPage={currentPage}
+						currentPage={meta.page}
 						totalPages={meta.totalPages}
 						basePath="/articles"
 					/>
 				</div>
 			)}
+		</>
+	);
+}
+
+/**
+ * All articles page. Renders the static header shell immediately, then streams
+ * in the articles grid via Suspense — compatible with cacheComponents: true.
+ * @param {AllArticlesPageProps} props - Page props including async searchParams
+ * @returns {React.ReactNode} Page shell with streamed articles grid
+ */
+export default function AllArticlesPage({
+	searchParams,
+}: AllArticlesPageProps) {
+	return (
+		<main className="px-8 py-12 md:px-16 md:py-16 lg:px-24">
+			{/* Back navigation */}
+			<BackButton className="mb-6" label="Back" />
+
+			{/* Static header — renders immediately */}
+			<h1 className="mb-8 text-3xl font-black tracking-tight">Articles</h1>
+
+			{/* Dynamic content — streams in with skeleton fallback */}
+			<Suspense fallback={<ArticlesGridSkeleton />}>
+				<ArticlesPageContent searchParams={searchParams} />
+			</Suspense>
 		</main>
 	);
 }
