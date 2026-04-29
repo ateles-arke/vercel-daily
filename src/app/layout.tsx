@@ -57,14 +57,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning className={BASE_CLASS_NAME}>
-			<head>
-				{/* Inline script runs before first paint to apply .dark without flash */}
-				<script
-					dangerouslySetInnerHTML={{
-						__html: `(function(){try{var c=document.cookie.split(';').find(function(s){return s.trim().startsWith('theme=');});var t=c?decodeURIComponent(c.trim().slice(6)):'dark';if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`,
-					}}
-				/>
-			</head>
+			<head></head>
 			<body className="min-h-full flex flex-col">
 				<Suspense fallback={<div className="h-14" />}>
 					<ThemeInitializer />
