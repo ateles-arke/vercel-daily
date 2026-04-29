@@ -69,16 +69,18 @@ export async function generateMetadata({
 	};
 }
 
-const RenderArticle = async ({
-	article,
-}: {
-	article: NonNullable<Awaited<ReturnType<typeof getArticleBySlug>>>;
-}) => {
+const RenderArticle = async ({ slug }: { slug: string }) => {
+	const article = await getArticleBySlug(slug);
+
+	if (!article) {
+		notFound();
+	}
 	const { isSubscribed } = getSubscriptionStateFromCookies(await cookies());
 	const trendingArticles = await getTrendingArticles();
 	const sidebarArticles = trendingArticles
 		.filter((trendingArticle) => trendingArticle.slug !== article.slug)
 		.slice(0, 4);
+
 	return (
 		<>
 			<div className="grid gap-14 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
@@ -110,11 +112,6 @@ const RenderArticle = async ({
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
 	const { slug } = await params;
-	const article = await getArticleBySlug(slug);
-
-	if (!article) {
-		notFound();
-	}
 
 	return (
 		<main className="px-8 py-12 md:px-16 md:py-16 lg:px-24">
@@ -122,7 +119,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 				<BackButton className="mb-8" label="Back" />
 
 				<Suspense fallback={<ArticleLoading />}>
-					<RenderArticle article={article} />
+					<RenderArticle slug={slug} />
 				</Suspense>
 			</div>
 		</main>
