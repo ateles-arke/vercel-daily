@@ -10,11 +10,19 @@ export const metadata: Metadata = {
 	title: 'Home',
 	description:
 		'News and insights for modern web developers. Changelogs, engineering deep dives, customer stories, and community updates — all in one place.',
+	robots: {
+		index: true,
+		follow: true,
+	},
 	openGraph: {
 		title: 'The Vercel Daily — News for Modern Web Developers',
 		description:
 			'News and insights for modern web developers. Changelogs, engineering deep dives, customer stories, and community updates — all in one place.',
 		url: '/',
+		type: 'website',
+	},
+	alternates: {
+		canonical: '/',
 	},
 };
 

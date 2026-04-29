@@ -16,11 +16,19 @@ export const metadata: Metadata = {
 	title: 'All Articles',
 	description:
 		'Browse all articles — changelogs, engineering deep dives, customer stories, and community updates from the Vercel team.',
+	robots: {
+		index: true,
+		follow: true,
+	},
 	openGraph: {
 		title: 'All Articles | The Vercel Daily',
 		description:
 			'Browse all articles — changelogs, engineering deep dives, customer stories, and community updates from the Vercel team.',
 		url: '/articles',
+		type: 'website',
+	},
+	alternates: {
+		canonical: '/articles',
 	},
 };
 

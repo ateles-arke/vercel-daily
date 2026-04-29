@@ -19,11 +19,19 @@ export const metadata: Metadata = {
 	title: 'Search',
 	description:
 		'Search Vercel Daily articles by query and category, with URL-persistent results you can refresh or share.',
+	robots: {
+		index: true,
+		follow: true,
+	},
 	openGraph: {
 		title: 'Search | The Vercel Daily',
 		description:
 			'Search Vercel Daily articles by query and category, with URL-persistent results you can refresh or share.',
 		url: '/search',
+		type: 'website',
+	},
+	alternates: {
+		canonical: '/search',
 	},
 };
 

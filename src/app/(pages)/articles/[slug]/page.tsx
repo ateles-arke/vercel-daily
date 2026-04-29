@@ -49,10 +49,15 @@ export async function generateMetadata({
 	return {
 		title: article.title,
 		description: article.excerpt,
+		robots: {
+			index: true,
+			follow: true,
+		},
 		openGraph: {
 			title: `${article.title} | The Vercel Daily`,
 			description: article.excerpt,
 			url: `/articles/${article.slug}`,
+			type: 'article',
 			images: [
 				{
 					url: article.image,
@@ -65,6 +70,9 @@ export async function generateMetadata({
 			title: `${article.title} | The Vercel Daily`,
 			description: article.excerpt,
 			images: [article.image],
+		},
+		alternates: {
+			canonical: `/articles/${article.slug}`,
 		},
 	};
 }

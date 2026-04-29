@@ -24,19 +24,44 @@ export const metadata: Metadata = {
 	},
 	description:
 		'Changelogs, engineering deep dives, customer stories, and community updates — all in one place.',
+	keywords: [
+		'vercel',
+		'next.js',
+		'web development',
+		'engineering',
+		'news',
+		'changelogs',
+	],
 	metadataBase: new URL('https://vercel-daily.vercel.app'),
+	robots: {
+		index: true,
+		follow: true,
+		googleBot: {
+			index: true,
+			follow: true,
+			'max-video-preview': -1,
+			'max-image-preview': 'large',
+			'max-snippet': -1,
+		},
+	},
 	openGraph: {
 		type: 'website',
 		siteName: 'The Vercel Daily',
 		title: 'The Vercel Daily',
 		description:
 			'Changelogs, engineering deep dives, customer stories, and community updates — all in one place.',
+		url: 'https://vercel-daily.vercel.app',
+		locale: 'en_US',
 	},
 	twitter: {
 		card: 'summary_large_image',
 		title: 'The Vercel Daily',
 		description:
 			'Changelogs, engineering deep dives, customer stories, and community updates — all in one place.',
+		creator: '@vercel',
+	},
+	alternates: {
+		canonical: 'https://vercel-daily.vercel.app',
 	},
 };
 
