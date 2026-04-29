@@ -2,9 +2,7 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import ArticleCard from '@/components/features/article/ArticleCard';
 import SearchControls from '@/components/features/search/SearchControls';
-import SearchPageSkeleton, {
-	SearchResultsSkeleton,
-} from '@/components/features/search/SearchPageSkeleton';
+import SearchPageSkeleton from '@/components/features/search/SearchPageSkeleton';
 import BackButton from '@/components/shared/BackButton';
 import {
 	getArticleCategories,
@@ -35,13 +33,16 @@ function getSingleParam(value: string | string[] | undefined): string {
 
 /**
  * Async server component that loads categories and renders the search controls form.
- * Separated from results so the form stays visible while results are re-fetching.
+ * Accepts children (the results section) so SearchControls can gate them with a
+ * skeleton while a navigation transition is pending.
  * @async
  */
 async function SearchControlsSection({
 	searchParams,
+	children,
 }: {
 	searchParams: Promise<Record<string, string | string[] | undefined>>;
+	children?: React.ReactNode;
 }) {
 	const params = await searchParams;
 	const query = getSingleParam(params.query).trim();
@@ -54,7 +55,9 @@ async function SearchControlsSection({
 			categories={categories}
 			initialQuery={query}
 			initialCategory={category}
-		/>
+		>
+			{children}
+		</SearchControls>
 	);
 }
 
@@ -148,10 +151,9 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
 			</div>
 
 			<Suspense fallback={<SearchPageSkeleton />}>
-				<SearchControlsSection searchParams={searchParams} />
-			</Suspense>
-			<Suspense fallback={<SearchResultsSkeleton />}>
-				<SearchResultsSection searchParams={searchParams} />
+				<SearchControlsSection searchParams={searchParams}>
+					<SearchResultsSection searchParams={searchParams} />
+				</SearchControlsSection>
 			</Suspense>
 		</main>
 	);

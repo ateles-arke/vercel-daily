@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, startTransition, useState, useTransition } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -25,6 +25,7 @@ export function useSearchControls({
 	const { replace } = useRouter();
 	const [query, setQuery] = useState(initialQuery);
 	const [category, setCategory] = useState(initialCategory);
+	const [isPending, startNavigationTransition] = useTransition();
 
 	function updateUrl(nextQuery: string, nextCategory: string) {
 		const params = new URLSearchParams(searchParams.toString());
@@ -44,7 +45,7 @@ export function useSearchControls({
 		}
 
 		const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-		replace(nextUrl);
+		startNavigationTransition(() => replace(nextUrl));
 	}
 
 	const debouncedUpdate = useDebouncedCallback(
@@ -66,7 +67,7 @@ export function useSearchControls({
 	function handleCategoryChange(nextCategory: string) {
 		setCategory(nextCategory);
 		debouncedUpdate.cancel();
-		updateUrl(query, nextCategory);
+		startTransition(() => updateUrl(query, nextCategory));
 	}
 
 	function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -78,6 +79,7 @@ export function useSearchControls({
 	return {
 		query,
 		category,
+		isPending,
 		handleQueryChange,
 		handleCategoryChange,
 		handleSubmit,

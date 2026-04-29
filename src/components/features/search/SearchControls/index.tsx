@@ -3,12 +3,14 @@
 import Button from '@/components/ui/atoms/Button';
 import Input from '@/components/ui/atoms/Input';
 import Select from '@/components/ui/atoms/Select';
+import { SearchResultsSkeleton } from '@/components/features/search/SearchPageSkeleton';
 import { useSearchControls } from './hooks/useSearchControls';
 
 interface SearchControlsProps {
 	categories: string[];
 	initialQuery: string;
 	initialCategory: string;
+	children?: React.ReactNode;
 }
 
 /**
@@ -21,10 +23,12 @@ export default function SearchControls({
 	categories,
 	initialQuery,
 	initialCategory,
+	children,
 }: SearchControlsProps) {
 	const {
 		query,
 		category,
+		isPending,
 		handleQueryChange,
 		handleCategoryChange,
 		handleSubmit,
@@ -74,5 +78,7 @@ export default function SearchControls({
 				</div>
 			</div>
 		</form>
+
+		{children && (isPending ? <SearchResultsSkeleton /> : children)}
 	);
 }
