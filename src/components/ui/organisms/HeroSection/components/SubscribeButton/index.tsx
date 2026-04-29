@@ -15,8 +15,14 @@ export default function HeroSubscribeButton() {
 		<Button
 			variant="secondary"
 			size="md"
-			onClick={() => void subscribe()}
-			disabled={isSubscribed}
+			onClick={() => {
+				if (isPending || isSubscribed) {
+					return;
+				}
+
+				void subscribe();
+			}}
+			disabled={isSubscribed || isPending}
 			isLoading={isPending}
 		>
 			{isSubscribed ? 'Subscribed' : 'Subscribe'}

@@ -38,6 +38,10 @@ function getServerSnapshot(): SubscriptionSnapshot {
 	return serverSnapshot;
 }
 
+function canStartMutation() {
+	return !subscriptionSnapshot.isPending;
+}
+
 function updateSnapshot(nextSnapshot: Partial<SubscriptionSnapshot>) {
 	subscriptionSnapshot = { ...subscriptionSnapshot, ...nextSnapshot };
 	emit();
@@ -84,6 +88,10 @@ export function useSubscription(initialIsSubscribed = false) {
 	}, [refreshSubscription]);
 
 	const subscribeToPlan = useCallback(async () => {
+		if (!canStartMutation()) {
+			return;
+		}
+
 		updateSnapshot({ isPending: true });
 
 		try {
@@ -103,6 +111,10 @@ export function useSubscription(initialIsSubscribed = false) {
 	}, [router]);
 
 	const unsubscribeFromPlan = useCallback(async () => {
+		if (!canStartMutation()) {
+			return;
+		}
+
 		updateSnapshot({ isPending: true });
 
 		try {
