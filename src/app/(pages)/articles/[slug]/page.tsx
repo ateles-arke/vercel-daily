@@ -118,7 +118,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 			<div className="mx-auto w-full max-w-[1248px]">
 				<BackButton className="mb-8" label="Back" />
 
-				<Suspense fallback={<ArticleLoading />}>
+				<Suspense fallback={'Loading article...'}>
 					<RenderArticle slug={slug} />
 				</Suspense>
 			</div>
