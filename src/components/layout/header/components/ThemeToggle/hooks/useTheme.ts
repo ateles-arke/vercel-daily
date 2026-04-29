@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useSyncExternalStore } from 'react';
 
 /**
  * Gets theme value from localStorage.
@@ -66,7 +66,7 @@ export function useTheme(initialIsDark: boolean) {
 		getServerSnapshot(initialIsDark),
 	);
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		document.documentElement.classList.toggle('dark', isDark);
 	}, [isDark]);
 
