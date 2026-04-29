@@ -127,9 +127,9 @@ export default function AllArticlesPage({
 			<h1 className="mb-8 text-3xl font-black tracking-tight">Articles</h1>
 
 			{/* Dynamic content — streams in with skeleton fallback */}
-			<Suspense fallback={<ArticlesGridSkeleton />}>
-				<ArticlesPageContent searchParams={searchParams} />
-			</Suspense>
+			{/* <Suspense fallback={<ArticlesGridSkeleton />}> */}
+			<ArticlesPageContent searchParams={searchParams} />
+			{/* </Suspense> */}
 		</main>
 	);
 }

@@ -1,10 +1,9 @@
-import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { cacheLife, cacheTag } from 'next/cache';
 import BreakingNewsBanner from '@/components/ui/organisms/BreakingNewsBanner';
 import HeroSection from '@/components/ui/organisms/HeroSection';
 import FeaturedArticles from '@/components/features/article/FeaturedArticles';
-import FeaturedArticlesSkeleton from '@/components/features/article/FeaturedArticles/Skeleton';
+
 import { getBreakingNews } from '@/services/newsApi';
 
 export const metadata: Metadata = {
@@ -44,13 +43,9 @@ async function BreakingNewsSection() {
 export default function Home() {
 	return (
 		<main>
-			{/* <Suspense fallback={<BreakingNewsSkeleton />}> */}
 			<BreakingNewsSection />
-			{/* </Suspense> */}
 			<HeroSection />
-			<Suspense fallback={<FeaturedArticlesSkeleton />}>
-				<FeaturedArticles />
-			</Suspense>
+			<FeaturedArticles />
 		</main>
 	);
 }
