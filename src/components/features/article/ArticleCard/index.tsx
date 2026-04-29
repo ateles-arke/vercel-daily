@@ -37,9 +37,10 @@ export default function ArticleCard({
 					alt={title}
 					fill
 					priority={priority}
+					fetchPriority={priority ? 'high' : 'auto'}
 					loading={priority ? undefined : 'lazy'}
 					className="object-cover transition-transform duration-300 hover:scale-105"
-					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+					sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
 				/>
 			</Link>
 
