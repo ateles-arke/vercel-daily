@@ -14,6 +14,8 @@ export default function ArticlesGridSkeleton({
 	showPagination = true,
 	cardCount = 12,
 }: ArticlesGridSkeletonProps) {
+	const safeCardCount =
+		Number.isInteger(cardCount) && cardCount > 0 ? cardCount : 0;
 	return (
 		<>
 			{showCount && (
@@ -25,7 +27,7 @@ export default function ArticlesGridSkeleton({
 
 			{/* Grid skeleton — 12 cards */}
 			<div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-				{[...Array(cardCount)].map((_, i) => (
+				{[...Array(safeCardCount)].map((_, i) => (
 					<div key={i} className="flex flex-col space-y-3">
 						<div className="aspect-video rounded-lg bg-foreground/10" />
 						<div className="h-3 w-32 rounded bg-foreground/10" />
