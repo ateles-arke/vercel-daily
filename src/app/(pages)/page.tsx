@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { cacheLife, cacheTag } from 'next/cache';
 import BreakingNewsBanner from '@/components/ui/organisms/BreakingNewsBanner';
-import BreakingNewsSkeleton from '@/components/ui/organisms/BreakingNewsBanner/Skeleton';
 import HeroSection from '@/components/ui/organisms/HeroSection';
 import FeaturedArticles from '@/components/features/article/FeaturedArticles';
 import FeaturedArticlesSkeleton from '@/components/features/article/FeaturedArticles/Skeleton';
