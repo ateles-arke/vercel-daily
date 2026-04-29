@@ -1,21 +1,12 @@
-import Button from '@/components/ui/atoms/Button';
 import BrowseArticlesButton from './components/BrowseArticlesButton';
-
-interface HeroSectionProps {
-	/**
-	 * Callback for subscribe button click
-	 * Optional - button can be stateless for now
-	 */
-	onSubscribeClick?: () => void;
-}
+import HeroSubscribeButton from './components/SubscribeButton';
 
 /**
  * Hero section occupying the full viewport height with heading, subtitle, and CTAs.
- * Displays "Browse articles" (secondary) and "Subscribe" (primary) buttons.
- * @param {HeroSectionProps} props - Optional click handlers
+ * Displays "Browse articles" and a working subscribe CTA.
  * @returns {React.ReactNode} The hero banner section
  */
-export default function HeroSection({ onSubscribeClick }: HeroSectionProps) {
+export default function HeroSection() {
 	return (
 		<section className="flex items-center py-16 md:py-20 px-8 md:px-16 lg:px-24">
 			<div className="max-w-2xl">
@@ -40,11 +31,7 @@ export default function HeroSection({ onSubscribeClick }: HeroSectionProps) {
 				{/* Buttons */}
 				<div className="flex flex-row gap-3">
 					<BrowseArticlesButton />
-
-					{/* Subscribe Button */}
-					<Button variant="secondary" size="md" onClick={onSubscribeClick}>
-						Subscribe
-					</Button>
+					<HeroSubscribeButton />
 				</div>
 			</div>
 		</section>

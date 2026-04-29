@@ -111,6 +111,21 @@ export async function getAllArticles(
 }
 
 /**
+ * Returns the unique sorted categories derived from the cached article collection.
+ * Used to populate the category filter dropdown on the search page.
+ * @async
+ * @returns {Promise<string[]>} Sorted array of unique category names
+ */
+export async function getArticleCategories(): Promise<string[]> {
+	const allArticles = await fetchArticlesCollection();
+	return Array.from(
+		new Set(
+			allArticles.map((article) => article.category.trim()).filter(Boolean),
+		),
+	).sort((left, right) => left.localeCompare(right));
+}
+
+/**
  * Fetches article data for the search page.
  * Uses the cached article collection, derives unique categories, returns the
  * newest articles by default, and filters server-side from URL params when the

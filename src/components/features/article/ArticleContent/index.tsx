@@ -57,9 +57,9 @@ function renderInlineText(text: string) {
 	});
 }
 
-	function hasRenderableImageSource(src: string): boolean {
-		return src.trim().length > 0;
-	}
+function hasRenderableImageSource(src: string): boolean {
+	return src.trim().length > 0;
+}
 
 export default function ArticleContent({ content }: ArticleContentProps) {
 	return (
@@ -68,7 +68,10 @@ export default function ArticleContent({ content }: ArticleContentProps) {
 				switch (block.type) {
 					case 'paragraph':
 						return (
-							<p key={`paragraph-${index}`} className="mb-6 text-base leading-8">
+							<p
+								key={`paragraph-${index}`}
+								className="mb-6 text-base leading-8"
+							>
 								{renderInlineText(block.text)}
 							</p>
 						);
@@ -87,7 +90,10 @@ export default function ArticleContent({ content }: ArticleContentProps) {
 
 					case 'unordered-list':
 						return (
-							<ul key={`unordered-list-${index}`} className="mb-8 space-y-3 pl-6">
+							<ul
+								key={`unordered-list-${index}`}
+								className="mb-8 space-y-3 pl-6"
+							>
 								{block.items.map((item, itemIndex) => (
 									<li
 										key={`unordered-item-${itemIndex}`}
@@ -129,7 +135,7 @@ export default function ArticleContent({ content }: ArticleContentProps) {
 									width={1200}
 									height={675}
 									className="h-auto w-full object-cover"
-									sizes="(max-width: 1024px) 100vw, 900px"
+									sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1200px"
 								/>
 								{block.caption && (
 									<figcaption className="px-4 py-3 text-sm text-foreground/55">

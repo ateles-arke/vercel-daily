@@ -12,14 +12,15 @@ A modern news and articles platform built with **Next.js 16**, **React 19**, **T
 
 ## Features
 
-- **Home Page**: Hero section with breaking news and featured articles
-- **Article Browse**: Paginated article grid with category browsing
+- **Home Page**: Hero section with breaking news and featured articles with subscribe CTA
+- **Article Browse**: Paginated article grid with category browsing and skeleton loading states
 - **Article Detail**: Full-article reading with subscription paywall (first paragraph + gradient fade visible to unsubscribed users)
-- **Search**: URL-param driven article search with category filters and debouncing
-- **Subscription**: Anonymous browser-session based subscription with paywall gating
-- **Dark Mode**: Built-in CSS variable theming supporting light and dark schemes
-- **Responsive Design**: Mobile-first responsive layout up to 1320.8px desktop max-width
+- **Search**: URL-param driven article search with category filters, debounced updates, and skeleton loading states
+- **Subscription**: Persistent anonymous subscription with paywall gating, bell icon state synchronization across pages
+- **Dark Mode**: localStorage-based theme persistence with no flash on page reload
+- **Responsive Design**: Mobile-first responsive layout up to 1280px desktop max-width
 - **Image Optimization**: Next.js `Image` component with automatic optimization
+- **Loading Skeletons**: Dedicated skeleton UI for search results, pagination, and featured articles
 - **Caching**: Server-side caching with `'use cache'` directive, cache tags, and cache life policies
 
 ## Getting Started
@@ -113,9 +114,21 @@ All components are Server Components by default. Use `'use client'` only for int
 - **Search results**: Server-side filtered from cached collection
 - **Article detail**: Static generation for top 10 trending articles
 
+### UX & Loading States
+
+- **Search results skeleton**: Grid skeleton displays while search query is pending
+- **Pagination skeleton**: Grid skeleton shows during page transitions without scroll jump
+- **Featured articles skeleton**: Placeholder blocks display while featured section loads
+- **Smooth navigation**: All pagination and filter changes use `{ scroll: false }` to prevent page jump
+
 ### Subscription Model
 
-Anonymous subscriptions stored in browser session cookies. Subscription state resolves server-side in the root layout and streams down via `initialIsSubscribed` prop, avoiding hydration mismatches.
+Anonymous subscriptions are stored in server session cookies (`subscription-token`, `subscription-status`). Client-side subscription state persists via a shared `useSyncExternalStore` hook (`useSubscription`) with module-level snapshot caching. This ensures:
+
+- Bell icon state remains consistent across page navigation and back button clicks
+- State syncs with server on first app load (via `/api/subscription` GET)
+- Actions (subscribe/unsubscribe) trigger `router.refresh()` to sync client and server
+- No flash or state reset on route changes
 
 ## Styling
 
@@ -126,7 +139,7 @@ Uses Tailwind CSS 4 utility classes with CSS custom properties for theme variabl
 	#ededed (dark);
 ```
 
-Dark mode is toggled via the `.dark` class applied to `<html>` element.
+Dark mode is toggled via the `.dark` class on `<html>` element. Theme preference is stored in `localStorage` and applied via a tiny head script before React hydration, preventing flash on page reload. Falls back to dark mode if no preference is set.
 
 ## References
 
