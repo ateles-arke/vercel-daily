@@ -45,9 +45,9 @@ async function BreakingNewsSection() {
 export default function Home() {
 	return (
 		<main>
-			<Suspense fallback={<BreakingNewsSkeleton />}>
-				<BreakingNewsSection />
-			</Suspense>
+			{/* <Suspense fallback={<BreakingNewsSkeleton />}> */}
+			<BreakingNewsSection />
+			{/* </Suspense> */}
 			<HeroSection />
 			<Suspense fallback={<FeaturedArticlesSkeleton />}>
 				<FeaturedArticles />

@@ -7,7 +7,7 @@
 export default function ArticleLoading() {
 	return (
 		<main className="px-8 py-12 md:px-16 md:py-16 lg:px-24">
-			<div className="mx-auto w-full max-w-[1280px]">
+			<div className="mx-auto w-full max-w-7xl">
 				{/* Back button skeleton */}
 				<div className="mb-8 h-5 w-16 animate-pulse rounded bg-foreground/10" />
 

@@ -115,7 +115,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
 	return (
 		<main className="px-8 py-12 md:px-16 md:py-16 lg:px-24">
-			<div className="mx-auto w-full max-w-[1280px]">
+			<div className="mx-auto w-full max-w-7xl">
 				<BackButton className="mb-8" label="Back" />
 
 				<Suspense fallback={<RenderArticleSkeleton />}>
