@@ -19,6 +19,8 @@ const geistMono = Geist_Mono({
 
 const BASE_CLASS_NAME = `${geistSans.variable} ${geistMono.variable} h-full antialiased`;
 
+const THEME_BOOTSTRAP_SCRIPT = `(function(){try{var m=document.cookie.match(/(?:^|; )theme=([^;]+)/);var t=m?decodeURIComponent(m[1]):'dark';document.documentElement.classList.toggle('dark',t==='dark');}catch(e){document.documentElement.classList.add('dark');}})();`;
+
 export const metadata: Metadata = {
 	title: {
 		default: 'The Vercel Daily',
@@ -47,6 +49,7 @@ async function ThemeInitializer() {
 	const themeCookie = cookieStore.get('theme')?.value ?? null;
 	const { isSubscribed } = getSubscriptionStateFromCookies(cookieStore);
 	const { isDark } = getInitialThemeConfig(BASE_CLASS_NAME, themeCookie);
+
 	return <Header initialIsDark={isDark} initialIsSubscribed={isSubscribed} />;
 }
 
@@ -57,7 +60,13 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning className={BASE_CLASS_NAME}>
-			<head></head>
+			<head>
+				<script
+					dangerouslySetInnerHTML={{
+						__html: THEME_BOOTSTRAP_SCRIPT,
+					}}
+				/>
+			</head>
 			<body className="min-h-full flex flex-col">
 				<Suspense fallback={<div className="h-14" />}>
 					<ThemeInitializer />
