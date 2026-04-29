@@ -67,18 +67,18 @@ export function useSubscription(initialIsSubscribed = false) {
 	const router = useRouter();
 	const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-	useEffect(() => {
-		updateSnapshot({ isSubscribed: initialIsSubscribed });
-	}, [initialIsSubscribed]);
-
 	const refreshSubscription = useCallback(async () => {
 		const isSubscribed = await readSubscriptionState();
 		updateSnapshot({ isSubscribed });
 	}, []);
 
+	// Initialize snapshot and refresh on mount/remount to ensure state stays
+	// in sync with server, especially after back navigation. The dependency
+	// on refreshSubscription ensures this runs whenever the callback recreates.
 	useEffect(() => {
+		updateSnapshot({ isSubscribed: initialIsSubscribed });
 		void refreshSubscription();
-	}, [refreshSubscription]);
+	}, [initialIsSubscribed, refreshSubscription]);
 
 	const subscribeToPlan = useCallback(async () => {
 		updateSnapshot({ isPending: true });
