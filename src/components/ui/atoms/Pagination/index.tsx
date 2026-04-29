@@ -74,7 +74,7 @@ export default function Pagination({
 			return;
 		}
 
-		router.push(href);
+		router.push(href, { scroll: false });
 	}
 
 	return (

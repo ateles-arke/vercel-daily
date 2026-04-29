@@ -30,7 +30,7 @@ export default function ArticlesGridSection({
 
 	function handleNavigate(href: string) {
 		startTransition(() => {
-			router.push(href);
+			router.push(href, { scroll: false });
 		});
 	}
 
