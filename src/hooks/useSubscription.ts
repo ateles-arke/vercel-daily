@@ -18,6 +18,7 @@ const serverSnapshot: SubscriptionSnapshot = {
 	isSubscribed: false,
 };
 
+let hasInitialFetchOccurred = false;
 const listeners = new Set<() => void>();
 
 function emit() {
@@ -72,13 +73,15 @@ export function useSubscription(initialIsSubscribed = false) {
 		updateSnapshot({ isSubscribed });
 	}, []);
 
-	// Initialize snapshot and refresh on mount/remount to ensure state stays
-	// in sync with server, especially after back navigation. The dependency
-	// on refreshSubscription ensures this runs whenever the callback recreates.
+	// Fetch subscription state once at app start, never again automatically.
+	// This ensures the bell doesn't flash on initial page load or back navigation.
+	// State persists via module-level snapshot across all component mounts.
 	useEffect(() => {
-		updateSnapshot({ isSubscribed: initialIsSubscribed });
-		void refreshSubscription();
-	}, [initialIsSubscribed, refreshSubscription]);
+		if (!hasInitialFetchOccurred) {
+			hasInitialFetchOccurred = true;
+			void refreshSubscription();
+		}
+	}, [refreshSubscription]);
 
 	const subscribeToPlan = useCallback(async () => {
 		updateSnapshot({ isPending: true });
