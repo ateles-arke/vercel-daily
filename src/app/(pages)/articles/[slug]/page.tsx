@@ -84,10 +84,11 @@ const RenderArticle = async ({ slug }: { slug: string }) => {
 		notFound();
 	}
 	const { isSubscribed } = getSubscriptionStateFromCookies(await cookies());
-	const trendingArticles = await getTrendingArticles();
-	const sidebarArticles = trendingArticles
-		.filter((trendingArticle) => trendingArticle.slug !== article.slug)
-		.slice(0, 4);
+	const sidebarArticles = isSubscribed
+		? (await getTrendingArticles())
+				.filter((trendingArticle) => trendingArticle.slug !== article.slug)
+				.slice(0, 4)
+		: [];
 
 	return (
 		<>
