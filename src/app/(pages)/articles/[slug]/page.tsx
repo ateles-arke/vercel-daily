@@ -9,7 +9,6 @@ import TrendingArticlesAside from '@/components/features/article/TrendingArticle
 import { getSubscriptionStateFromCookies } from '@/lib/subscription';
 import { getArticleBySlug, getTrendingArticles } from '@/services/newsApi';
 import { Suspense } from 'react';
-import ArticleLoading from './loading';
 
 interface ArticlePageProps {
 	params: Promise<{ slug: string }>;
@@ -115,7 +114,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
 	return (
 		<main className="px-8 py-12 md:px-16 md:py-16 lg:px-24">
-			<div className="mx-auto w-full max-w-[1248px]">
+			<div className="mx-auto w-full max-w-[1280px]">
 				<BackButton className="mb-8" label="Back" />
 
 				<Suspense fallback={'Loading article...'}>
