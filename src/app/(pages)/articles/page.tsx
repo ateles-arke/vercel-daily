@@ -1,7 +1,7 @@
 import { cacheLife, cacheTag } from 'next/cache';
 import type { Metadata } from 'next';
 import ArticleCard from '@/components/features/article/ArticleCard';
-import Pagination from '@/components/ui/atoms/Pagination';
+import ArticlesGridSection from '@/components/features/article/ArticlesGridSection';
 
 import BackButton from '@/components/shared/BackButton';
 import { getAllArticles } from '@/services/newsApi';
@@ -69,42 +69,30 @@ async function ArticlesGrid({ currentPage }: { currentPage: number }) {
 	cacheTag(`articles-page:${currentPage}`);
 
 	const { articles, meta } = await getAllArticles(currentPage, PAGE_SIZE);
+	const gridContent =
+		articles.length === 0 ? (
+			<div className="rounded-2xl border border-foreground/10 bg-foreground/3 px-6 py-10 text-center">
+				<p className="text-base font-medium text-foreground/70">
+					No articles found.
+				</p>
+			</div>
+		) : (
+			<div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+				{articles.map((article) => (
+					<ArticleCard key={article.id} article={article} />
+				))}
+			</div>
+		);
 
 	return (
-		<>
-			{/* Article count */}
-			<p className="mb-8 text-sm text-foreground/50">
-				{meta.total > 0
-					? `${meta.total} article${meta.total !== 1 ? 's' : ''}`
-					: 'All articles'}
-			</p>
-
-			{/* Articles grid */}
-			{articles.length === 0 ? (
-				<div className="rounded-2xl border border-foreground/10 bg-foreground/3 px-6 py-10 text-center">
-					<p className="text-base font-medium text-foreground/70">
-						No articles found.
-					</p>
-				</div>
-			) : (
-				<div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-					{articles.map((article) => (
-						<ArticleCard key={article.id} article={article} />
-					))}
-				</div>
-			)}
-
-			{/* Pagination */}
-			{meta.totalPages > 1 && (
-				<div className="mt-12 flex justify-center">
-					<Pagination
-						currentPage={meta.page}
-						totalPages={meta.totalPages}
-						basePath="/articles"
-					/>
-				</div>
-			)}
-		</>
+		<ArticlesGridSection
+			total={meta.total}
+			currentPage={meta.page}
+			totalPages={meta.totalPages}
+			basePath="/articles"
+		>
+			{gridContent}
+		</ArticlesGridSection>
 	);
 }
 

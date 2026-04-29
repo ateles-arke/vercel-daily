@@ -1,5 +1,7 @@
+'use client';
+
 import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/cn';
 
 interface PaginationProps {
@@ -10,6 +12,8 @@ interface PaginationProps {
 	/** Base path for page links, e.g. '/articles' */
 	basePath: string;
 	className?: string;
+	onNavigate?: (href: string) => void;
+	disabled?: boolean;
 }
 
 /**
@@ -53,23 +57,41 @@ export default function Pagination({
 	totalPages,
 	basePath,
 	className,
+	onNavigate,
+	disabled = false,
 }: PaginationProps) {
+	const router = useRouter();
+
 	if (totalPages <= 1) return null;
 
 	const hasPrev = currentPage > 1;
 	const hasNext = currentPage < totalPages;
 	const pages = getPageNumbers(currentPage, totalPages);
 
+	function navigate(href: string) {
+		if (onNavigate) {
+			onNavigate(href);
+			return;
+		}
+
+		router.push(href);
+	}
+
 	return (
-		<nav aria-label="Pagination" className={cn('flex items-center gap-1', className)}>
+		<nav
+			aria-label="Pagination"
+			className={cn('flex items-center gap-1', className)}
+		>
 			{/* Previous */}
 			{hasPrev ? (
-				<Link
-					href={pageHref(basePath, currentPage - 1)}
+				<button
+					type="button"
 					aria-label="Previous page"
+					disabled={disabled}
+					onClick={() => navigate(pageHref(basePath, currentPage - 1))}
 					className={cn(
 						itemBase,
-						'border border-foreground/20 text-foreground hover:bg-foreground/5',
+						'border border-foreground/20 text-foreground hover:bg-foreground/5 disabled:cursor-wait disabled:opacity-60',
 					)}
 				>
 					<Image
@@ -79,12 +101,15 @@ export default function Pagination({
 						height={14}
 						className="dark:invert"
 					/>
-				</Link>
+				</button>
 			) : (
 				<span
 					aria-disabled="true"
 					aria-label="Previous page"
-					className={cn(itemBase, 'border border-foreground/10 text-foreground/30')}
+					className={cn(
+						itemBase,
+						'border border-foreground/10 text-foreground/30',
+					)}
 				>
 					<Image
 						src="/icons/arrow-left.svg"
@@ -106,30 +131,34 @@ export default function Pagination({
 						&hellip;
 					</span>
 				) : (
-					<Link
+					<button
 						key={page}
-						href={pageHref(basePath, page as number)}
+						type="button"
 						aria-current={page === currentPage ? 'page' : undefined}
+						disabled={disabled || page === currentPage}
+						onClick={() => navigate(pageHref(basePath, page as number))}
 						className={cn(
 							itemBase,
 							page === currentPage
 								? 'bg-foreground font-semibold text-background'
-								: 'border border-foreground/20 text-foreground hover:bg-foreground/5',
+								: 'border border-foreground/20 text-foreground hover:bg-foreground/5 disabled:cursor-wait disabled:opacity-60',
 						)}
 					>
 						{page}
-					</Link>
+					</button>
 				),
 			)}
 
 			{/* Next */}
 			{hasNext ? (
-				<Link
-					href={pageHref(basePath, currentPage + 1)}
+				<button
+					type="button"
 					aria-label="Next page"
+					disabled={disabled}
+					onClick={() => navigate(pageHref(basePath, currentPage + 1))}
 					className={cn(
 						itemBase,
-						'border border-foreground/20 text-foreground hover:bg-foreground/5',
+						'border border-foreground/20 text-foreground hover:bg-foreground/5 disabled:cursor-wait disabled:opacity-60',
 					)}
 				>
 					<Image
@@ -139,12 +168,15 @@ export default function Pagination({
 						height={14}
 						className="dark:invert"
 					/>
-				</Link>
+				</button>
 			) : (
 				<span
 					aria-disabled="true"
 					aria-label="Next page"
-					className={cn(itemBase, 'border border-foreground/10 text-foreground/30')}
+					className={cn(
+						itemBase,
+						'border border-foreground/10 text-foreground/30',
+					)}
 				>
 					<Image
 						src="/icons/arrow-right.svg"
