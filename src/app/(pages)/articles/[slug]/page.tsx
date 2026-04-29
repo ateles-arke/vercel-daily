@@ -6,6 +6,7 @@ import ArticleContent from '@/components/features/article/ArticleContent';
 import ArticleHeader from '@/components/features/article/ArticleHeader';
 import ArticlePaywall from '@/components/features/article/ArticlePaywall';
 import TrendingArticlesAside from '@/components/features/article/TrendingArticlesAside';
+import RenderArticleSkeleton from '@/components/features/article/RenderArticleSkeleton';
 import { getSubscriptionStateFromCookies } from '@/lib/subscription';
 import { getArticleBySlug, getTrendingArticles } from '@/services/newsApi';
 import { Suspense } from 'react';
@@ -117,7 +118,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 			<div className="mx-auto w-full max-w-[1280px]">
 				<BackButton className="mb-8" label="Back" />
 
-				<Suspense fallback={'Loading article...'}>
+				<Suspense fallback={<RenderArticleSkeleton />}>
 					<RenderArticle slug={slug} />
 				</Suspense>
 			</div>
