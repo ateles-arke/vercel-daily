@@ -5,6 +5,7 @@ import type { Article } from '@/types/api';
 
 interface ArticleCardProps {
 	article: Article;
+	priority?: boolean;
 }
 
 /**
@@ -14,7 +15,10 @@ interface ArticleCardProps {
  * @param {ArticleCardProps} props - The article data to display
  * @returns {React.ReactNode} The article card element
  */
-export default function ArticleCard({ article }: ArticleCardProps) {
+export default function ArticleCard({
+	article,
+	priority = false,
+}: ArticleCardProps) {
 	const { slug, title, excerpt, category, publishedAt, image } = article;
 	const parsedDate = parseISO(publishedAt);
 	const hasValidDate = isValid(parsedDate);
@@ -32,6 +36,8 @@ export default function ArticleCard({ article }: ArticleCardProps) {
 					src={image}
 					alt={title}
 					fill
+					priority={priority}
+					loading={priority ? undefined : 'lazy'}
 					className="object-cover transition-transform duration-300 hover:scale-105"
 					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
 				/>

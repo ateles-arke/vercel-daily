@@ -117,8 +117,12 @@ async function SearchResultsSection({
 				</div>
 			) : (
 				<div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-					{articles.map((article) => (
-						<ArticleCard key={article.id} article={article} />
+					{articles.map((article, idx) => (
+						<ArticleCard
+							key={article.id}
+							article={article}
+							priority={idx < 3}
+						/>
 					))}
 				</div>
 			)}

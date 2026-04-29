@@ -41,8 +41,8 @@ export default async function FeaturedArticles() {
 			</div>
 
 			<div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-				{articles.slice(0, 6).map((article) => (
-					<ArticleCard key={article.id} article={article} />
+				{articles.slice(0, 6).map((article, idx) => (
+					<ArticleCard key={article.id} article={article} priority={idx < 3} />
 				))}
 			</div>
 		</section>
