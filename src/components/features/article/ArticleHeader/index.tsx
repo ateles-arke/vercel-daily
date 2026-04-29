@@ -85,8 +85,9 @@ export default function ArticleHeader({ article }: ArticleHeaderProps) {
 					alt={article.title}
 					fill
 					priority
+					fetchPriority="high"
 					className="object-cover"
-					sizes="(max-width: 1024px) 100vw, 900px"
+					sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1200px"
 				/>
 			</div>
 		</header>
