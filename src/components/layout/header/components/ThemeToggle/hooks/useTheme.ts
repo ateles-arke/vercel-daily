@@ -6,7 +6,11 @@ import { useCallback, useEffect, useSyncExternalStore } from 'react';
  */
 function getStoredTheme(): string | null {
 	if (typeof window === 'undefined') return null;
-	return window.localStorage.getItem('theme');
+	try {
+		return window.localStorage.getItem('theme');
+	} catch {
+		return null;
+	}
 }
 
 /**
@@ -15,7 +19,11 @@ function getStoredTheme(): string | null {
  */
 function setStoredTheme(value: string): void {
 	if (typeof window === 'undefined') return;
-	window.localStorage.setItem('theme', value);
+	try {
+		window.localStorage.setItem('theme', value);
+	} catch {
+		// Storage blocked (private browsing, quota exceeded, etc.) — ignore
+	}
 }
 
 /**
