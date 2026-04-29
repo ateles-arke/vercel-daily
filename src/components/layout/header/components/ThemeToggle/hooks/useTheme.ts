@@ -48,7 +48,18 @@ function subscribeToStorage(callback: () => void) {
  */
 function getSnapshot() {
 	const stored = getStoredTheme();
-	return stored ? stored === 'dark' : true;
+	if (stored) {
+		return stored === 'dark';
+	}
+
+	if (
+		typeof window === 'undefined' ||
+		typeof window.matchMedia !== 'function'
+	) {
+		return false;
+	}
+
+	return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
 /**

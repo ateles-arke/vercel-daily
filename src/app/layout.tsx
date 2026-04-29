@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 const BASE_CLASS_NAME = `${geistSans.variable} ${geistMono.variable} h-full antialiased`;
 
-const THEME_BOOTSTRAP_SCRIPT = `(function(){try{var t=localStorage.getItem('theme')||'dark';document.documentElement.classList.toggle('dark',t==='dark');}catch(e){document.documentElement.classList.add('dark');}})();`;
+const THEME_BOOTSTRAP_SCRIPT = `(function(){try{var t=localStorage.getItem('theme');var d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',t?t==='dark':d);}catch(e){var d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',!!d);}})();`;
 
 export const metadata: Metadata = {
 	title: {
