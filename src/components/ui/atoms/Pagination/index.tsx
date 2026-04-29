@@ -1,5 +1,7 @@
-import Image from 'next/image';
+'use client';
+
 import Link from 'next/link';
+import Image from 'next/image';
 import { cn } from '@/lib/cn';
 
 interface PaginationProps {
@@ -10,6 +12,8 @@ interface PaginationProps {
 	/** Base path for page links, e.g. '/articles' */
 	basePath: string;
 	className?: string;
+	onNavigate?: (href: string) => void;
+	disabled?: boolean;
 }
 
 /**
@@ -53,6 +57,8 @@ export default function Pagination({
 	totalPages,
 	basePath,
 	className,
+	onNavigate,
+	disabled = false,
 }: PaginationProps) {
 	if (totalPages <= 1) return null;
 
@@ -60,16 +66,33 @@ export default function Pagination({
 	const hasNext = currentPage < totalPages;
 	const pages = getPageNumbers(currentPage, totalPages);
 
+	function handleClick(e: React.MouseEvent, href: string) {
+		if (disabled) {
+			e.preventDefault();
+			return;
+		}
+		if (onNavigate) {
+			e.preventDefault();
+			onNavigate(href);
+		}
+	}
+
 	return (
-		<nav aria-label="Pagination" className={cn('flex items-center gap-1', className)}>
+		<nav
+			aria-label="Pagination"
+			className={cn('flex items-center gap-1', className)}
+		>
 			{/* Previous */}
 			{hasPrev ? (
 				<Link
 					href={pageHref(basePath, currentPage - 1)}
 					aria-label="Previous page"
+					rel="prev"
+					onClick={(e) => handleClick(e, pageHref(basePath, currentPage - 1))}
 					className={cn(
 						itemBase,
 						'border border-foreground/20 text-foreground hover:bg-foreground/5',
+						disabled && 'pointer-events-none cursor-wait opacity-60',
 					)}
 				>
 					<Image
@@ -84,7 +107,10 @@ export default function Pagination({
 				<span
 					aria-disabled="true"
 					aria-label="Previous page"
-					className={cn(itemBase, 'border border-foreground/10 text-foreground/30')}
+					className={cn(
+						itemBase,
+						'border border-foreground/10 text-foreground/30',
+					)}
 				>
 					<Image
 						src="/icons/arrow-left.svg"
@@ -105,16 +131,26 @@ export default function Pagination({
 					>
 						&hellip;
 					</span>
+				) : page === currentPage ? (
+					<span
+						key={page}
+						aria-current="page"
+						className={cn(
+							itemBase,
+							'bg-foreground font-semibold text-background',
+						)}
+					>
+						{page}
+					</span>
 				) : (
 					<Link
 						key={page}
 						href={pageHref(basePath, page as number)}
-						aria-current={page === currentPage ? 'page' : undefined}
+						onClick={(e) => handleClick(e, pageHref(basePath, page as number))}
 						className={cn(
 							itemBase,
-							page === currentPage
-								? 'bg-foreground font-semibold text-background'
-								: 'border border-foreground/20 text-foreground hover:bg-foreground/5',
+							'border border-foreground/20 text-foreground hover:bg-foreground/5',
+							disabled && 'pointer-events-none cursor-wait opacity-60',
 						)}
 					>
 						{page}
@@ -127,9 +163,12 @@ export default function Pagination({
 				<Link
 					href={pageHref(basePath, currentPage + 1)}
 					aria-label="Next page"
+					rel="next"
+					onClick={(e) => handleClick(e, pageHref(basePath, currentPage + 1))}
 					className={cn(
 						itemBase,
 						'border border-foreground/20 text-foreground hover:bg-foreground/5',
+						disabled && 'pointer-events-none cursor-wait opacity-60',
 					)}
 				>
 					<Image
@@ -144,7 +183,10 @@ export default function Pagination({
 				<span
 					aria-disabled="true"
 					aria-label="Next page"
-					className={cn(itemBase, 'border border-foreground/10 text-foreground/30')}
+					className={cn(
+						itemBase,
+						'border border-foreground/10 text-foreground/30',
+					)}
 				>
 					<Image
 						src="/icons/arrow-right.svg"

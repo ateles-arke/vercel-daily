@@ -1,10 +1,6 @@
-import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Header from '@/components/layout/header';
-import { getSubscriptionStateFromCookies } from '@/lib/subscription';
-import { getInitialThemeConfig } from '@/lib/theme';
 import './globals.css';
 
 const geistSans = Geist({
@@ -19,6 +15,8 @@ const geistMono = Geist_Mono({
 
 const BASE_CLASS_NAME = `${geistSans.variable} ${geistMono.variable} h-full antialiased`;
 
+const THEME_BOOTSTRAP_SCRIPT = `(function(){try{var t=localStorage.getItem('theme');var d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',t?t==='dark':d);}catch(e){var d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',!!d);}})();`;
+
 export const metadata: Metadata = {
 	title: {
 		default: 'The Vercel Daily',
@@ -26,29 +24,46 @@ export const metadata: Metadata = {
 	},
 	description:
 		'Changelogs, engineering deep dives, customer stories, and community updates — all in one place.',
+	keywords: [
+		'vercel',
+		'next.js',
+		'web development',
+		'engineering',
+		'news',
+		'changelogs',
+	],
 	metadataBase: new URL('https://vercel-daily.vercel.app'),
+	robots: {
+		index: true,
+		follow: true,
+		googleBot: {
+			index: true,
+			follow: true,
+			'max-video-preview': -1,
+			'max-image-preview': 'large',
+			'max-snippet': -1,
+		},
+	},
 	openGraph: {
 		type: 'website',
 		siteName: 'The Vercel Daily',
 		title: 'The Vercel Daily',
 		description:
 			'Changelogs, engineering deep dives, customer stories, and community updates — all in one place.',
+		url: 'https://vercel-daily.vercel.app',
+		locale: 'en_US',
 	},
 	twitter: {
 		card: 'summary_large_image',
 		title: 'The Vercel Daily',
 		description:
 			'Changelogs, engineering deep dives, customer stories, and community updates — all in one place.',
+		creator: '@vercel',
+	},
+	alternates: {
+		canonical: 'https://vercel-daily.vercel.app',
 	},
 };
-
-async function ThemeInitializer() {
-	const cookieStore = await cookies();
-	const themeCookie = cookieStore.get('theme')?.value ?? null;
-	const { isSubscribed } = getSubscriptionStateFromCookies(cookieStore);
-	const { isDark } = getInitialThemeConfig(BASE_CLASS_NAME, themeCookie);
-	return <Header initialIsDark={isDark} initialIsSubscribed={isSubscribed} />;
-}
 
 export default function RootLayout({
 	children,
@@ -58,17 +73,14 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning className={BASE_CLASS_NAME}>
 			<head>
-				{/* Inline script runs before first paint to apply .dark without flash */}
 				<script
 					dangerouslySetInnerHTML={{
-						__html: `(function(){try{var c=document.cookie.split(';').find(function(s){return s.trim().startsWith('theme=');});var t=c?decodeURIComponent(c.trim().slice(6)):'dark';if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`,
+						__html: THEME_BOOTSTRAP_SCRIPT,
 					}}
 				/>
 			</head>
 			<body className="min-h-full flex flex-col">
-				<Suspense fallback={<div className="h-14" />}>
-					<ThemeInitializer />
-				</Suspense>
+				<Header />
 				{children}
 			</body>
 		</html>

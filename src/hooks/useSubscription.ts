@@ -18,6 +18,7 @@ const serverSnapshot: SubscriptionSnapshot = {
 	isSubscribed: false,
 };
 
+let hasInitialFetchOccurred = false;
 const listeners = new Set<() => void>();
 
 function emit() {
@@ -35,6 +36,10 @@ function getSnapshot() {
 
 function getServerSnapshot(): SubscriptionSnapshot {
 	return serverSnapshot;
+}
+
+function canStartMutation() {
+	return !subscriptionSnapshot.isPending;
 }
 
 function updateSnapshot(nextSnapshot: Partial<SubscriptionSnapshot>) {
@@ -67,20 +72,26 @@ export function useSubscription(initialIsSubscribed = false) {
 	const router = useRouter();
 	const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-	useEffect(() => {
-		updateSnapshot({ isSubscribed: initialIsSubscribed });
-	}, [initialIsSubscribed]);
-
 	const refreshSubscription = useCallback(async () => {
 		const isSubscribed = await readSubscriptionState();
 		updateSnapshot({ isSubscribed });
 	}, []);
 
+	// Fetch subscription state once at app start, never again automatically.
+	// This ensures the bell doesn't flash on initial page load or back navigation.
+	// State persists via module-level snapshot across all component mounts.
 	useEffect(() => {
-		void refreshSubscription();
+		if (!hasInitialFetchOccurred) {
+			hasInitialFetchOccurred = true;
+			void refreshSubscription();
+		}
 	}, [refreshSubscription]);
 
 	const subscribeToPlan = useCallback(async () => {
+		if (!canStartMutation()) {
+			return;
+		}
+
 		updateSnapshot({ isPending: true });
 
 		try {
@@ -100,6 +111,10 @@ export function useSubscription(initialIsSubscribed = false) {
 	}, [router]);
 
 	const unsubscribeFromPlan = useCallback(async () => {
+		if (!canStartMutation()) {
+			return;
+		}
+
 		updateSnapshot({ isPending: true });
 
 		try {

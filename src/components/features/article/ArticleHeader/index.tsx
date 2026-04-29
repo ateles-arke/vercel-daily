@@ -30,7 +30,7 @@ export default function ArticleHeader({ article }: ArticleHeaderProps) {
 	return (
 		<header className="mb-10 border-b border-foreground/10 pb-10">
 			<div className="mb-6 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.24em] text-foreground/55">
-				<span className="rounded-full bg-foreground/5 px-3 py-1 text-foreground/70">
+				<span className="rounded-full bg-foreground/5 px-3 pl-0 py-1 text-foreground/70">
 					{article.category}
 				</span>
 				<time dateTime={article.publishedAt}>{formattedDate}</time>
@@ -85,8 +85,9 @@ export default function ArticleHeader({ article }: ArticleHeaderProps) {
 					alt={article.title}
 					fill
 					priority
+					fetchPriority="high"
 					className="object-cover"
-					sizes="(max-width: 1024px) 100vw, 900px"
+					sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1200px"
 				/>
 			</div>
 		</header>
