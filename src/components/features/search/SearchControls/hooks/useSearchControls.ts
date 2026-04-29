@@ -44,8 +44,10 @@ export function useSearchControls({
 			params.delete('category');
 		}
 
-		const nextUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-		startNavigationTransition(() => replace(nextUrl));
+		const nextUrl = params.toString()
+			? `${pathname}?${params.toString()}`
+			: pathname;
+		startNavigationTransition(() => replace(nextUrl, { scroll: false }));
 	}
 
 	const debouncedUpdate = useDebouncedCallback(
