@@ -1,7 +1,7 @@
 'use client';
 
+import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/cn';
 
 interface PaginationProps {
@@ -60,21 +60,21 @@ export default function Pagination({
 	onNavigate,
 	disabled = false,
 }: PaginationProps) {
-	const router = useRouter();
-
 	if (totalPages <= 1) return null;
 
 	const hasPrev = currentPage > 1;
 	const hasNext = currentPage < totalPages;
 	const pages = getPageNumbers(currentPage, totalPages);
 
-	function navigate(href: string) {
-		if (onNavigate) {
-			onNavigate(href);
+	function handleClick(e: React.MouseEvent, href: string) {
+		if (disabled) {
+			e.preventDefault();
 			return;
 		}
-
-		router.push(href, { scroll: false });
+		if (onNavigate) {
+			e.preventDefault();
+			onNavigate(href);
+		}
 	}
 
 	return (
@@ -84,14 +84,15 @@ export default function Pagination({
 		>
 			{/* Previous */}
 			{hasPrev ? (
-				<button
-					type="button"
+				<Link
+					href={pageHref(basePath, currentPage - 1)}
 					aria-label="Previous page"
-					disabled={disabled}
-					onClick={() => navigate(pageHref(basePath, currentPage - 1))}
+					rel="prev"
+					onClick={(e) => handleClick(e, pageHref(basePath, currentPage - 1))}
 					className={cn(
 						itemBase,
-						'border border-foreground/20 text-foreground hover:bg-foreground/5 disabled:cursor-wait disabled:opacity-60',
+						'border border-foreground/20 text-foreground hover:bg-foreground/5',
+						disabled && 'pointer-events-none cursor-wait opacity-60',
 					)}
 				>
 					<Image
@@ -101,7 +102,7 @@ export default function Pagination({
 						height={14}
 						className="dark:invert"
 					/>
-				</button>
+				</Link>
 			) : (
 				<span
 					aria-disabled="true"
@@ -130,35 +131,44 @@ export default function Pagination({
 					>
 						&hellip;
 					</span>
-				) : (
-					<button
+				) : page === currentPage ? (
+					<span
 						key={page}
-						type="button"
-						aria-current={page === currentPage ? 'page' : undefined}
-						disabled={disabled || page === currentPage}
-						onClick={() => navigate(pageHref(basePath, page as number))}
+						aria-current="page"
 						className={cn(
 							itemBase,
-							page === currentPage
-								? 'bg-foreground font-semibold text-background'
-								: 'border border-foreground/20 text-foreground hover:bg-foreground/5 disabled:cursor-wait disabled:opacity-60',
+							'bg-foreground font-semibold text-background',
 						)}
 					>
 						{page}
-					</button>
+					</span>
+				) : (
+					<Link
+						key={page}
+						href={pageHref(basePath, page as number)}
+						onClick={(e) => handleClick(e, pageHref(basePath, page as number))}
+						className={cn(
+							itemBase,
+							'border border-foreground/20 text-foreground hover:bg-foreground/5',
+							disabled && 'pointer-events-none cursor-wait opacity-60',
+						)}
+					>
+						{page}
+					</Link>
 				),
 			)}
 
 			{/* Next */}
 			{hasNext ? (
-				<button
-					type="button"
+				<Link
+					href={pageHref(basePath, currentPage + 1)}
 					aria-label="Next page"
-					disabled={disabled}
-					onClick={() => navigate(pageHref(basePath, currentPage + 1))}
+					rel="next"
+					onClick={(e) => handleClick(e, pageHref(basePath, currentPage + 1))}
 					className={cn(
 						itemBase,
-						'border border-foreground/20 text-foreground hover:bg-foreground/5 disabled:cursor-wait disabled:opacity-60',
+						'border border-foreground/20 text-foreground hover:bg-foreground/5',
+						disabled && 'pointer-events-none cursor-wait opacity-60',
 					)}
 				>
 					<Image
@@ -168,7 +178,7 @@ export default function Pagination({
 						height={14}
 						className="dark:invert"
 					/>
-				</button>
+				</Link>
 			) : (
 				<span
 					aria-disabled="true"
