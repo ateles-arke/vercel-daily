@@ -1,10 +1,6 @@
-import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Header from '@/components/layout/header';
-import { getSubscriptionStateFromCookies } from '@/lib/subscription';
-import { getInitialThemeConfig } from '@/lib/theme';
 import './globals.css';
 
 const geistSans = Geist({
@@ -19,7 +15,7 @@ const geistMono = Geist_Mono({
 
 const BASE_CLASS_NAME = `${geistSans.variable} ${geistMono.variable} h-full antialiased`;
 
-const THEME_BOOTSTRAP_SCRIPT = `(function(){try{var m=document.cookie.match(/(?:^|; )theme=([^;]+)/);var t=m?decodeURIComponent(m[1]):'dark';document.documentElement.classList.toggle('dark',t==='dark');}catch(e){document.documentElement.classList.add('dark');}})();`;
+const THEME_BOOTSTRAP_SCRIPT = `(function(){try{var t=localStorage.getItem('theme')||'dark';document.documentElement.classList.toggle('dark',t==='dark');}catch(e){document.documentElement.classList.add('dark');}})();`;
 
 export const metadata: Metadata = {
 	title: {
@@ -44,15 +40,6 @@ export const metadata: Metadata = {
 	},
 };
 
-async function ThemeInitializer() {
-	const cookieStore = await cookies();
-	const themeCookie = cookieStore.get('theme')?.value ?? null;
-	const { isSubscribed } = getSubscriptionStateFromCookies(cookieStore);
-	const { isDark } = getInitialThemeConfig(BASE_CLASS_NAME, themeCookie);
-
-	return <Header initialIsDark={isDark} initialIsSubscribed={isSubscribed} />;
-}
-
 export default function RootLayout({
 	children,
 }: Readonly<{
@@ -68,9 +55,7 @@ export default function RootLayout({
 				/>
 			</head>
 			<body className="min-h-full flex flex-col">
-				<Suspense fallback={<div className="h-14" />}>
-					<ThemeInitializer />
-				</Suspense>
+				<Header />
 				{children}
 			</body>
 		</html>

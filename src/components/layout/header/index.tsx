@@ -5,8 +5,8 @@ import ThemeToggle from './components/ThemeToggle';
 import SubscribeButton from './components/SubscribeButton';
 
 interface HeaderProps {
-	initialIsDark: boolean;
-	initialIsSubscribed: boolean;
+	initialIsDark?: boolean;
+	initialIsSubscribed?: boolean;
 }
 
 /**
@@ -16,8 +16,8 @@ interface HeaderProps {
  * @returns {React.ReactNode} The header navigation element
  */
 export default function Header({
-	initialIsDark,
-	initialIsSubscribed,
+	initialIsDark = true,
+	initialIsSubscribed = false,
 }: HeaderProps) {
 	return (
 		<header className="sticky top-0 z-50 w-full border-b border-(--header-border) bg-(--header-bg) transition-colors duration-300">
