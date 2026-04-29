@@ -2,9 +2,14 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import ArticleCard from '@/components/features/article/ArticleCard';
 import SearchControls from '@/components/features/search/SearchControls';
-import SearchPageSkeleton from '@/components/features/search/SearchPageSkeleton';
+import SearchPageSkeleton, {
+	SearchResultsSkeleton,
+} from '@/components/features/search/SearchPageSkeleton';
 import BackButton from '@/components/shared/BackButton';
-import { getSearchArticlesData } from '@/services/newsApi';
+import {
+	getArticleCategories,
+	getSearchArticlesData,
+} from '@/services/newsApi';
 
 const MAX_RESULTS = 5;
 
@@ -29,13 +34,11 @@ function getSingleParam(value: string | string[] | undefined): string {
 }
 
 /**
- * Async search content driven by URL params.
- * Keeps the page shell static while controls/results stream in.
+ * Async server component that loads categories and renders the search controls form.
+ * Separated from results so the form stays visible while results are re-fetching.
  * @async
- * @param {{ searchParams: Promise<Record<string, string | string[] | undefined>> }} props - Async route search params
- * @returns {Promise<React.ReactNode>} Search controls and article results
  */
-async function SearchPageContent({
+async function SearchControlsSection({
 	searchParams,
 }: {
 	searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -43,8 +46,37 @@ async function SearchPageContent({
 	const params = await searchParams;
 	const query = getSingleParam(params.query).trim();
 	const category = getSingleParam(params.category).trim();
-	const { articles, categories, total, hasActiveSearch } =
-		await getSearchArticlesData(query, category, MAX_RESULTS);
+	const categories = await getArticleCategories();
+
+	return (
+		<SearchControls
+			key={`${query}::${category}`}
+			categories={categories}
+			initialQuery={query}
+			initialCategory={category}
+		/>
+	);
+}
+
+/**
+ * Async server component that fetches and renders the search results section.
+ * Wrapped in its own Suspense so it can show a grid skeleton independently
+ * of the search controls while results are loading.
+ * @async
+ */
+async function SearchResultsSection({
+	searchParams,
+}: {
+	searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+	const params = await searchParams;
+	const query = getSingleParam(params.query).trim();
+	const category = getSingleParam(params.category).trim();
+	const { articles, total, hasActiveSearch } = await getSearchArticlesData(
+		query,
+		category,
+		MAX_RESULTS,
+	);
 
 	const visibleCount = articles.length;
 	const resultLabel = hasActiveSearch ? 'Search results' : 'Recent articles';
@@ -55,48 +87,39 @@ async function SearchPageContent({
 		: `Showing the ${visibleCount} most recent article${visibleCount === 1 ? '' : 's'}.`;
 
 	return (
-		<>
-			<SearchControls
-				key={`${query}::${category}`}
-				categories={categories}
-				initialQuery={query}
-				initialCategory={category}
-			/>
-
-			<section className="mt-8">
-				<div className="flex flex-col gap-3 border-b border-foreground/10 pb-5 sm:flex-row sm:items-end sm:justify-between">
-					<div>
-						<h2 className="text-2xl font-semibold tracking-tight text-foreground">
-							{resultLabel}
-						</h2>
-						<p className="mt-2 text-sm text-foreground/55">{resultSummary}</p>
-					</div>
-					{hasActiveSearch && (
-						<p className="text-xs font-semibold uppercase tracking-[0.22em] text-foreground/45">
-							{category ? `${category} filtered` : 'All categories'}
-						</p>
-					)}
+		<section className="mt-8">
+			<div className="flex flex-col gap-3 border-b border-foreground/10 pb-5 sm:flex-row sm:items-end sm:justify-between">
+				<div>
+					<h2 className="text-2xl font-semibold tracking-tight text-foreground">
+						{resultLabel}
+					</h2>
+					<p className="mt-2 text-sm text-foreground/55">{resultSummary}</p>
 				</div>
-
-				{articles.length === 0 ? (
-					<div className="mt-8 rounded-3xl border border-foreground/10 bg-foreground/3 px-6 py-12 text-center">
-						<h3 className="text-xl font-semibold tracking-tight text-foreground">
-							No articles found
-						</h3>
-						<p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-foreground/60">
-							Try a broader term, remove the category filter, or search with at
-							least three characters for automatic updates.
-						</p>
-					</div>
-				) : (
-					<div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-						{articles.map((article) => (
-							<ArticleCard key={article.id} article={article} />
-						))}
-					</div>
+				{hasActiveSearch && (
+					<p className="text-xs font-semibold uppercase tracking-[0.22em] text-foreground/45">
+						{category ? `${category} filtered` : 'All categories'}
+					</p>
 				)}
-			</section>
-		</>
+			</div>
+
+			{articles.length === 0 ? (
+				<div className="mt-8 rounded-3xl border border-foreground/10 bg-foreground/3 px-6 py-12 text-center">
+					<h3 className="text-xl font-semibold tracking-tight text-foreground">
+						No articles found
+					</h3>
+					<p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-foreground/60">
+						Try a broader term, remove the category filter, or search with at
+						least three characters for automatic updates.
+					</p>
+				</div>
+			) : (
+				<div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+					{articles.map((article) => (
+						<ArticleCard key={article.id} article={article} />
+					))}
+				</div>
+			)}
+		</section>
 	);
 }
 
@@ -111,7 +134,7 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
 		<main className="px-8 py-12 md:px-16 md:py-16 lg:px-24">
 			<BackButton className="mb-6" label="Back" />
 
-			<div className="max-w-3xl">
+			<div className="max-w-3xl mb-10">
 				<p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/45">
 					Search
 				</p>
@@ -125,7 +148,10 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
 			</div>
 
 			<Suspense fallback={<SearchPageSkeleton />}>
-				<SearchPageContent searchParams={searchParams} />
+				<SearchControlsSection searchParams={searchParams} />
+			</Suspense>
+			<Suspense fallback={<SearchResultsSkeleton />}>
+				<SearchResultsSection searchParams={searchParams} />
 			</Suspense>
 		</main>
 	);

@@ -30,7 +30,7 @@ export default function ArticleHeader({ article }: ArticleHeaderProps) {
 	return (
 		<header className="mb-10 border-b border-foreground/10 pb-10">
 			<div className="mb-6 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.24em] text-foreground/55">
-				<span className="rounded-full bg-foreground/5 px-3 py-1 text-foreground/70">
+				<span className="rounded-full bg-foreground/5 px-3 pl-0 py-1 text-foreground/70">
 					{article.category}
 				</span>
 				<time dateTime={article.publishedAt}>{formattedDate}</time>
