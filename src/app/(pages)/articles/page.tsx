@@ -1,9 +1,8 @@
-import { Suspense } from 'react';
 import { cacheLife, cacheTag } from 'next/cache';
 import type { Metadata } from 'next';
 import ArticleCard from '@/components/features/article/ArticleCard';
 import Pagination from '@/components/ui/atoms/Pagination';
-import ArticlesGridSkeleton from '@/components/features/article/ArticlesGridSkeleton';
+
 import BackButton from '@/components/shared/BackButton';
 import { getAllArticles } from '@/services/newsApi';
 
@@ -126,10 +125,7 @@ export default function AllArticlesPage({
 			{/* Static header — renders immediately */}
 			<h1 className="mb-8 text-3xl font-black tracking-tight">Articles</h1>
 
-			{/* Dynamic content — streams in with skeleton fallback */}
-			{/* <Suspense fallback={<ArticlesGridSkeleton />}> */}
 			<ArticlesPageContent searchParams={searchParams} />
-			{/* </Suspense> */}
 		</main>
 	);
 }
