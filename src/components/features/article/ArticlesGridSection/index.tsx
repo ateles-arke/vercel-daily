@@ -37,9 +37,7 @@ export default function ArticlesGridSection({
 	return (
 		<>
 			<p className="mb-8 text-sm text-foreground/50">
-				{total > 0
-					? `${total} article${total !== 1 ? 's' : ''}`
-					: 'All articles'}
+				{total > 0 ? `${total} article${total !== 1 ? 's' : ''}` : '0 articles'}
 			</p>
 
 			{isPending ? (
