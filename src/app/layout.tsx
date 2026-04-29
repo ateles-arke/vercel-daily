@@ -73,13 +73,6 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning className={BASE_CLASS_NAME}>
 			<head>
-				{/* Preconnect to Google Fonts to reduce critical request chain latency */}
-				<link rel="preconnect" href="https://fonts.googleapis.com" />
-				<link
-					rel="preconnect"
-					href="https://fonts.gstatic.com"
-					crossOrigin="anonymous"
-				/>
 				<script
 					dangerouslySetInnerHTML={{
 						__html: THEME_BOOTSTRAP_SCRIPT,
